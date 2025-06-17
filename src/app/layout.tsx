@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import AuthButton from "@/components/AuthButton"; // AuthButton 임포트
+import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +19,13 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={`${inter.className} bg-background text-foreground`}>
-        {children}
+        <header className="w-full p-4 border-b border-gray-700 flex justify-between items-center">
+          <Link href="/" className="text-xl font-bold text-cyan-500">
+            My Game TODO
+          </Link>
+          <AuthButton />
+        </header>
+        <main>{children}</main>
       </body>
     </html>
   );
