@@ -6,7 +6,6 @@ import { AddGameCard } from "@/components/todo/AddGameCard";
 import { AddGameModal } from "@/components/todo/AddGameModal";
 import { AddTaskModal } from "@/components/todo/AddTaskModal";
 
-// --- 타입 정의 ---
 export interface Task {
   id: string;
   text: string;
@@ -14,7 +13,6 @@ export interface Task {
   dueDate: string | null;
 }
 
-// 'daily', 'other', 'misc'만 카테고리로 사용하도록 타입을 명확히 지정
 export type Category = "daily" | "other" | "misc";
 
 export interface Game {
@@ -30,7 +28,6 @@ export interface Game {
 }
 
 export default function TodoPage() {
-  // --- 상태 관리 ---
   const [games, setGames] = useState<Game[]>([]);
   const [isGameModalOpen, setGameModalOpen] = useState(false);
   const [isTaskModalOpen, setTaskModalOpen] = useState(false);
@@ -40,7 +37,6 @@ export default function TodoPage() {
     title: string;
   } | null>(null);
 
-  // --- 데이터 로딩 & 저장 ---
   useEffect(() => {
     const savedGames = localStorage.getItem("myGameTodo");
     if (savedGames) {
@@ -49,13 +45,11 @@ export default function TodoPage() {
   }, []);
 
   useEffect(() => {
-    // games 배열이 초기화된 후부터 localStorage에 저장
     if (games.length > 0 || localStorage.getItem("myGameTodo")) {
       localStorage.setItem("myGameTodo", JSON.stringify(games));
     }
   }, [games]);
 
-  // --- 핸들러 함수들 ---
   const handleAddGame = (newGameData: Omit<Game, "id" | "tasks">) => {
     const newGame: Game = {
       ...newGameData,

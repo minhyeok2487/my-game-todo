@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Task, Category } from "@/app/todo/page";
+import { Task, Category } from "@/app/(main)/todo/page";
 
 // 컴포넌트가 받을 props의 타입을 정의합니다.
 interface AddTaskModalProps {

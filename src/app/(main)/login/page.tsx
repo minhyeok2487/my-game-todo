@@ -2,40 +2,29 @@
 
 import Link from "next/link";
 import { useState } from "react";
-// --- 추가된 부분 ---
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-// --- 여기까지 ---
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // --- 추가된 부분 ---
   const router = useRouter();
   const supabase = createClient();
-  // --- 여기까지 ---
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // --- ★★★ 여기가 핵심 로그인 로직입니다 ★★★ ---
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
-      // 로그인 실패 시 사용자에게 에러 메시지 표시
       alert("로그인에 실패했습니다: " + error.message);
     } else {
-      // 로그인 성공 시 TODO 페이지로 이동
       router.push("/todo");
-
-      // 페이지를 새로고침하여 서버 컴포넌트(예: AuthButton)가
-      // 새로운 로그인 상태를 반영하도록 합니다.
       router.refresh();
     }
-    // --- 여기까지 ---
   };
 
   return (

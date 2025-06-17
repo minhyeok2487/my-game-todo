@@ -1,4 +1,4 @@
-import { Game, Category, Task } from "@/app/todo/page";
+import { Game, Category, Task } from "@/app/(main)/todo/page";
 import { Plus, X } from "lucide-react";
 
 // 컴포넌트가 받을 props 정의

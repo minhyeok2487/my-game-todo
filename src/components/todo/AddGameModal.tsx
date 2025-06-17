@@ -1,4 +1,4 @@
-import { Game } from "@/app/todo/page";
+import { Game } from "@/app/(main)/todo/page";
 
 interface AddGameModalProps {
   isOpen: boolean;
