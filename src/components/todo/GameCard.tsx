@@ -1,16 +1,18 @@
+"use client";
+
 import { Game, Category, Task } from "@/app/(main)/todo/page";
-import { Plus, X } from "lucide-react";
+import { Plus, X, Check, Calendar } from "lucide-react";
 
 // 컴포넌트가 받을 props 정의
 interface GameCardProps {
   game: Game;
   onDeleteGame: (gameId: string) => void;
   onOpenTaskModal: (gameId: string, category: Category, title: string) => void;
-  onToggleTask: (gameId: string, category: Category, taskId: string) => void;
-  onDeleteTask: (gameId: string, category: Category, taskId: string) => void;
+  onToggleTask: (taskId: string) => void;
+  onDeleteTask: (taskId: string) => void;
 }
 
-// 할 일 아이템을 위한 컴포넌트
+// 할 일 아이템(TaskItem)을 위한 별도 컴포넌트
 const TaskItem = ({
   task,
   onToggle,
@@ -19,26 +21,72 @@ const TaskItem = ({
   task: Task;
   onToggle: () => void;
   onDelete: () => void;
-}) => (
-  <li className="flex items-center gap-2 py-1.5">
-    <input
-      type="checkbox"
-      checked={task.completed}
-      onChange={onToggle}
-      className="w-5 h-5 rounded bg-gray-700 border-gray-600 text-cyan-500 focus:ring-cyan-600"
-    />
-    <span
-      className={`flex-grow ${
-        task.completed ? "line-through text-gray-500" : "text-gray-200"
-      }`}
-    >
-      {task.text}
-    </span>
-    <button onClick={onDelete} className="text-gray-500 hover:text-red-500">
-      <X size={16} />
-    </button>
-  </li>
-);
+}) => {
+  // D-day 계산 함수
+  const getDday = (dueDate: string | null) => {
+    if (!dueDate) return null;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // 시간은 무시하고 날짜만 비교
+    const due = new Date(dueDate);
+    due.setHours(0, 0, 0, 0);
+
+    const diffTime = due.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (task.completed) return null; // 완료된 항목은 D-day 숨김
+    if (diffDays < 0)
+      return (
+        <span className="text-xs text-red-500 font-semibold">
+          D+{Math.abs(diffDays)}
+        </span>
+      );
+    if (diffDays === 0)
+      return (
+        <span className="text-xs text-yellow-400 font-semibold">D-Day</span>
+      );
+    return `D-${diffDays}`;
+  };
+
+  return (
+    <li className="flex items-center gap-2 py-1.5 group">
+      {/* 체크박스 UI 개선 */}
+      <button
+        onClick={onToggle}
+        className={`w-5 h-5 rounded flex items-center justify-center border-2 shrink-0 transition-colors ${
+          task.completed
+            ? "bg-cyan-500 border-cyan-500"
+            : "bg-gray-800 border-gray-600 hover:border-cyan-500"
+        }`}
+      >
+        {task.completed && <Check size={16} className="text-white" />}
+      </button>
+
+      <span
+        className={`flex-grow ${
+          task.completed ? "line-through text-gray-500" : "text-gray-200"
+        }`}
+      >
+        {task.text}
+      </span>
+
+      {/* D-day 표시 */}
+      {task.due_date && (
+        <span className="text-xs text-gray-400 flex items-center gap-1 ml-auto pl-2">
+          <Calendar size={12} />
+          {getDday(task.due_date)}
+        </span>
+      )}
+
+      {/* 삭제 버튼 */}
+      <button
+        onClick={onDelete}
+        className="text-gray-500 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+      >
+        <X size={16} />
+      </button>
+    </li>
+  );
+};
 
 // 메인 게임 카드 컴포넌트
 export const GameCard = ({
@@ -55,18 +103,20 @@ export const GameCard = ({
   ];
 
   return (
-    <div className="bg-[#1F2937] rounded-lg border border-[#374151] flex flex-col shadow-lg">
+    <div className="bg-[#1F2937] rounded-lg border border-[#374151] flex flex-col shadow-lg min-h-[400px]">
+      {/* 카드 상단: 이미지와 제목 */}
       <div
         className="h-36 bg-cover bg-center rounded-t-lg relative"
         style={{
-          backgroundImage: `url(${game.imageUrl || ""})`,
-          backgroundColor: "#374151",
+          backgroundImage: `url(${game.image_url || ""})`,
+          backgroundColor: "#374151", // 이미지가 없을 경우를 위한 배경색
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
         <button
           onClick={() => onDeleteGame(game.id)}
-          className="absolute top-2 right-2 p-1.5 bg-black/50 rounded-full text-white hover:bg-red-500 transition-colors"
+          className="absolute top-2 right-2 p-1.5 bg-black/50 rounded-full text-white hover:bg-red-500 transition-colors z-10"
+          aria-label="게임 카드 삭제"
         >
           <X size={18} />
         </button>
@@ -75,24 +125,30 @@ export const GameCard = ({
             {game.name}
           </h3>
           <p className="text-gray-300 font-medium [text-shadow:_0_1px_2px_var(--tw-shadow-color)]">
-            {game.characterName}
+            {game.character_name}
           </p>
         </div>
       </div>
 
-      <div className="p-4 flex-grow">
+      {/* 카드 하단: 숙제 목록 */}
+      <div className="p-4 flex-grow flex flex-col">
         {categories.map(({ key, title }) => (
           <div key={key} className="mb-4">
-            <h4 className="font-bold text-cyan-400 mb-2">{title}</h4>
+            <div className="flex justify-between items-center mb-2">
+              <h4 className="font-bold text-cyan-400">{title}</h4>
+            </div>
             <ul className="space-y-1">
-              {game.tasks[key].map((task) => (
-                <TaskItem
-                  key={task.id}
-                  task={task}
-                  onToggle={() => onToggleTask(game.id, key, task.id)}
-                  onDelete={() => onDeleteTask(game.id, key, task.id)}
-                />
-              ))}
+              {/* ⭐️ 에러 수정: tasks 배열에서 현재 카테고리와 일치하는 항목만 필터링하여 map을 실행합니다. */}
+              {game.tasks
+                .filter((task) => task.category === key)
+                .map((task) => (
+                  <TaskItem
+                    key={task.id}
+                    task={task}
+                    onToggle={() => onToggleTask(task.id)}
+                    onDelete={() => onDeleteTask(task.id)}
+                  />
+                ))}
             </ul>
             <button
               onClick={() => onOpenTaskModal(game.id, key, `새 ${title}`)}
