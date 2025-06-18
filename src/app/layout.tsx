@@ -18,14 +18,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={`${inter.className} bg-background text-foreground`}>
-        <header className="w-full p-4 border-b border-gray-700 flex justify-between items-center">
+      <body
+        className={`${inter.className} bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex flex-col h-screen`}
+      >
+        <header className="w-full p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center shrink-0">
           <Link href="/" className="text-xl font-bold text-cyan-500">
             My Game TODO
           </Link>
           <AuthButton />
         </header>
-        <main>{children}</main>
+        <main className="flex-grow overflow-y-auto">{children}</main>
       </body>
     </html>
   );
