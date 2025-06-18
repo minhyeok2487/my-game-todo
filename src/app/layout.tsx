@@ -1,6 +1,9 @@
+// app/layout.tsx (수정된 최종 코드)
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/themes/ThemeProvider";
+import { ThemeToggleButton } from "@/components/themes/ThemeToggleButton";
 import AuthButton from "@/components/AuthButton";
 import Link from "next/link";
 
@@ -17,17 +20,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
       <body
-        className={`${inter.className} bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex flex-col h-screen`}
+        className={`${inter.className} bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors`}
       >
-        <header className="w-full p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center shrink-0">
-          <Link href="/" className="text-xl font-bold text-cyan-500">
-            My Game TODO
-          </Link>
-          <AuthButton />
-        </header>
-        <main className="flex-grow overflow-y-auto">{children}</main>
+        <ThemeProvider
+          attribute="data-theme"
+          defaultTheme="system"
+          enableSystem
+        >
+          <header className="w-full p-4 flex justify-between items-center">
+            <Link href="/" className="text-xl font-bold text-cyan-500">
+              My Game TODO
+            </Link>
+            <div className="flex items-center gap-2">
+              <ThemeToggleButton />
+              <AuthButton />
+            </div>
+          </header>
+          <main>{children}</main>
+        </ThemeProvider>
       </body>
     </html>
   );
