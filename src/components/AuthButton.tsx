@@ -16,7 +16,7 @@ export default async function AuthButton() {
         {user.email}
       </span>
       <form action={signOut}>
-        <button className="px-3 py-1.5 text-sm font-semibold bg-gray-700 rounded-md hover:bg-gray-600">
+        <button className="cursor-pointer px-3 py-1.5 text-sm font-semibold bg-gray-700 rounded-md hover:bg-gray-600">
           로그아웃
         </button>
       </form>
@@ -24,7 +24,7 @@ export default async function AuthButton() {
   ) : (
     <Link
       href="/login"
-      className="px-4 py-2 text-sm font-semibold bg-cyan-600 rounded-md hover:bg-cyan-700"
+      className="cursor-pointer px-4 py-2 text-sm font-semibold bg-cyan-600 rounded-md hover:bg-cyan-700"
     >
       로그인
     </Link>

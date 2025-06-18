@@ -9,6 +9,7 @@ import { SelectGameModal } from "@/components/todo/SelectGameModal";
 import { AddGameModal } from "@/components/todo/AddGameModal";
 import { AddTaskModal } from "@/components/todo/AddTaskModal";
 import { User } from "@supabase/supabase-js";
+import { GameCardSkeleton } from "@/components/todo/GameCardSkeleton";
 
 // --- 타입 정의 ---
 export type Category = "daily" | "other" | "misc";
@@ -72,7 +73,6 @@ export default function TodoPage() {
   // 2. 로그인된 사용자의 데이터 불러오기
   const fetchGames = useCallback(
     async (userId: string) => {
-      setIsLoading(true);
       const { data, error } = await supabase
         .from("games")
         .select(
@@ -125,7 +125,9 @@ export default function TodoPage() {
   };
 
   // --- 데이터 CRUD 핸들러 ---
-  const handleAddGame = async (newGameData: Omit<Game, "id" | "tasks">) => {
+  const handleAddGame = async (
+    newGameData: Omit<Game, "id" | "tasks" | "created_at">
+  ) => {
     if (!user) return;
 
     const { data: newGame, error } = await supabase
@@ -149,21 +151,33 @@ export default function TodoPage() {
     }
   };
 
+  // ⭐️ 이 함수의 타입을 수정했습니다.
   const handleAddTask = async (
     gameId: string,
     category: Category,
-    taskData: Omit<Task, "id" | "category">
+    // 1. AddTaskModal이 보내주는 타입과 일치시킵니다. (completed 제외)
+    taskData: Omit<Task, "id" | "category" | "completed">
   ) => {
     if (!user) return;
 
     const { data: newTask, error } = await supabase
       .from("tasks")
-      .insert({ ...taskData, game_id: gameId, user_id: user.id, category })
+      // 2. DB에 추가할 때 'completed: false' 기본값을 여기서 설정해줍니다.
+      .insert({
+        ...taskData,
+        completed: false,
+        game_id: gameId,
+        user_id: user.id,
+        category,
+      })
       .select()
       .single();
 
-    if (error) alert("숙제 추가 실패: " + error.message);
-    else if (newTask) fetchGames(user.id); // 데이터 정합성을 위해 전체 재조회
+    if (error) {
+      alert("숙제 추가 실패: " + error.message);
+    } else if (newTask) {
+      fetchGames(user.id); // 데이터 정합성을 위해 전체 재조회
+    }
   };
 
   const handleToggleTask = async (taskId: string) => {
@@ -177,39 +191,47 @@ export default function TodoPage() {
       .update({ completed: !taskToToggle.completed })
       .eq("id", taskId);
 
-    if (error) alert("상태 변경 실패: " + error.message);
-    else fetchGames(user.id);
+    if (error) {
+      alert("상태 변경 실패: " + error.message);
+    } else {
+      fetchGames(user.id);
+    }
   };
 
   const handleDeleteTask = async (taskId: string) => {
     if (!user) return;
     const { error } = await supabase.from("tasks").delete().eq("id", taskId);
-    if (error) alert("숙제 삭제 실패: " + error.message);
-    else fetchGames(user.id);
+    if (error) {
+      alert("숙제 삭제 실패: " + error.message);
+    } else {
+      fetchGames(user.id);
+    }
   };
-
-  if (isLoading || !user) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-[#111827] text-white">
-        로딩 중...
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto p-4 md:p-8">
       <main className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {games.map((game) => (
-          <GameCard
-            key={game.id}
-            game={game}
-            onDeleteGame={handleDeleteGame}
-            onOpenTaskModal={handleOpenTaskModal}
-            onToggleTask={handleToggleTask}
-            onDeleteTask={handleDeleteTask}
-          />
-        ))}
-        <AddGameCard onOpenModal={handleOpenSelectGameModal} />
+        {isLoading ? (
+          // 로딩 중일 때: 스켈레톤 카드를 4개 보여줍니다.
+          Array.from({ length: 4 }).map((_, index) => (
+            <GameCardSkeleton key={index} />
+          ))
+        ) : (
+          // 로딩 완료 후: 실제 게임 카드를 보여줍니다.
+          <>
+            {games.map((game) => (
+              <GameCard
+                key={game.id}
+                game={game}
+                onDeleteGame={handleDeleteGame}
+                onOpenTaskModal={handleOpenTaskModal}
+                onToggleTask={handleToggleTask}
+                onDeleteTask={handleDeleteTask}
+              />
+            ))}
+            <AddGameCard onOpenModal={handleOpenSelectGameModal} />
+          </>
+        )}
       </main>
 
       <SelectGameModal

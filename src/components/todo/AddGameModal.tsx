@@ -104,13 +104,13 @@ export const AddGameModal = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2 rounded-lg bg-gray-600 hover:bg-gray-700 font-semibold text-white"
+              className="cursor-pointer px-5 py-2 rounded-lg bg-gray-600 hover:bg-gray-700 font-semibold text-white"
             >
               취소
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-600 text-white font-semibold"
+              className="cursor-pointer px-5 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-600 text-white font-semibold"
             >
               추가하기
             </button>

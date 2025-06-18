@@ -54,7 +54,10 @@ export const SelectGameModal = ({
       >
         <header className="p-4 flex justify-between items-center border-b border-gray-700 shrink-0">
           <h2 className="text-lg font-bold text-white">게임 선택</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white">
+          <button
+            onClick={onClose}
+            className="cursor-pointer text-gray-400 hover:text-white"
+          >
             <X />
           </button>
         </header>
@@ -64,7 +67,7 @@ export const SelectGameModal = ({
               <button
                 key={game.id}
                 onClick={() => onSelectGame(game)}
-                className="h-40 group relative rounded-lg overflow-hidden border-2 border-transparent hover:border-cyan-500 focus:border-cyan-500 transition-all outline-none"
+                className="cursor-pointer h-40 group relative rounded-lg overflow-hidden border-2 border-transparent hover:border-cyan-500 focus:border-cyan-500 transition-all outline-none"
               >
                 <Image
                   src={game.default_image_url}
@@ -79,10 +82,9 @@ export const SelectGameModal = ({
                 </span>
               </button>
             ))}
-            {/* '기타' 버튼도 동일하게 h-40을 적용하여 높이를 맞춥니다. */}
             <button
               onClick={onSelectCustom}
-              className="h-40 flex flex-col items-center justify-center bg-gray-800 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-cyan-400 transition-colors"
+              className="cursor-pointer h-40 flex flex-col items-center justify-center bg-gray-800 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-cyan-400 transition-colors"
             >
               <PlusSquare size={40} />
               <span className="mt-2 text-sm font-semibold">

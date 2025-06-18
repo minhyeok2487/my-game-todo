@@ -22,18 +22,16 @@ const TaskItem = ({
   onToggle: () => void;
   onDelete: () => void;
 }) => {
-  // D-day 계산 함수
+  // D-day 계산 함수 (변경 없음)
   const getDday = (dueDate: string | null) => {
     if (!dueDate) return null;
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // 시간은 무시하고 날짜만 비교
+    today.setHours(0, 0, 0, 0);
     const due = new Date(dueDate);
     due.setHours(0, 0, 0, 0);
-
     const diffTime = due.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (task.completed) return null; // 완료된 항목은 D-day 숨김
+    if (task.completed) return null;
     if (diffDays < 0)
       return (
         <span className="text-xs text-red-500 font-semibold">
@@ -48,26 +46,31 @@ const TaskItem = ({
   };
 
   return (
-    <li className="flex items-center gap-2 py-1.5 group">
-      {/* 체크박스 UI 개선 */}
-      <button
-        onClick={onToggle}
-        className={`w-5 h-5 rounded flex items-center justify-center border-2 shrink-0 transition-colors ${
-          task.completed
-            ? "bg-cyan-500 border-cyan-500"
-            : "bg-gray-800 border-gray-600 hover:border-cyan-500"
-        }`}
+    <li className="flex items-center justify-between py-1.5 group">
+      {/* ⭐️ 1. 체크박스와 텍스트를 하나의 클릭 가능한 div로 묶습니다. */}
+      <div
+        className="flex items-center gap-2 flex-grow cursor-pointer"
+        onClick={onToggle} // ⭐️ 2. 그룹 전체에 onToggle 이벤트를 적용합니다.
       >
-        {task.completed && <Check size={16} className="text-white" />}
-      </button>
+        {/* ⭐️ 3. 기존 button을 div로 변경하여 중첩된 클릭 요소를 피합니다. (웹 접근성 향상) */}
+        <div
+          className={`w-5 h-5 rounded flex items-center justify-center border-2 shrink-0 transition-colors ${
+            task.completed
+              ? "bg-cyan-500 border-cyan-500"
+              : "bg-gray-800 border-gray-600 group-hover:border-cyan-500"
+          }`}
+        >
+          {task.completed && <Check size={16} className="text-white" />}
+        </div>
 
-      <span
-        className={`flex-grow ${
-          task.completed ? "line-through text-gray-500" : "text-gray-200"
-        }`}
-      >
-        {task.text}
-      </span>
+        <span
+          className={`flex-grow ${
+            task.completed ? "line-through text-gray-500" : "text-gray-200"
+          }`}
+        >
+          {task.text}
+        </span>
+      </div>
 
       {/* D-day 표시 */}
       {task.due_date && (
@@ -80,7 +83,7 @@ const TaskItem = ({
       {/* 삭제 버튼 */}
       <button
         onClick={onDelete}
-        className="text-gray-500 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+        className="cursor-pointer text-gray-500 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity ml-2"
       >
         <X size={16} />
       </button>
@@ -104,18 +107,17 @@ export const GameCard = ({
 
   return (
     <div className="bg-[#1F2937] rounded-lg border border-[#374151] flex flex-col shadow-lg min-h-[400px]">
-      {/* 카드 상단: 이미지와 제목 */}
       <div
         className="h-36 bg-cover bg-center rounded-t-lg relative"
         style={{
           backgroundImage: `url(${game.image_url || ""})`,
-          backgroundColor: "#374151", // 이미지가 없을 경우를 위한 배경색
+          backgroundColor: "#374151",
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
         <button
           onClick={() => onDeleteGame(game.id)}
-          className="absolute top-2 right-2 p-1.5 bg-black/50 rounded-full text-white hover:bg-red-500 transition-colors z-10"
+          className="cursor-pointer absolute top-2 right-2 p-1.5 bg-black/50 rounded-full text-white hover:bg-red-500 transition-colors z-10"
           aria-label="게임 카드 삭제"
         >
           <X size={18} />
@@ -130,7 +132,6 @@ export const GameCard = ({
         </div>
       </div>
 
-      {/* 카드 하단: 숙제 목록 */}
       <div className="p-4 flex-grow flex flex-col">
         {categories.map(({ key, title }) => (
           <div key={key} className="mb-4">
@@ -138,7 +139,6 @@ export const GameCard = ({
               <h4 className="font-bold text-cyan-400">{title}</h4>
             </div>
             <ul className="space-y-1">
-              {/* ⭐️ 에러 수정: tasks 배열에서 현재 카테고리와 일치하는 항목만 필터링하여 map을 실행합니다. */}
               {game.tasks
                 .filter((task) => task.category === key)
                 .map((task) => (
@@ -152,7 +152,7 @@ export const GameCard = ({
             </ul>
             <button
               onClick={() => onOpenTaskModal(game.id, key, `새 ${title}`)}
-              className="mt-2 flex items-center gap-1 text-sm text-gray-400 hover:text-cyan-400 transition-colors w-full"
+              className="cursor-pointer mt-2 flex items-center gap-1 text-sm text-gray-400 hover:text-cyan-400 transition-colors w-full"
             >
               <Plus size={16} />
               <span>숙제 추가</span>
