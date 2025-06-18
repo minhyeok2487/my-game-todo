@@ -82,7 +82,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
         <header className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            다시 오신 것을 환영해요!
+            환영합니다!
           </h1>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
             계정이 없으신가요?{" "}
