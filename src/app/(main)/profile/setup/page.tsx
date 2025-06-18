@@ -36,9 +36,9 @@ export default function ProfileSetupPage() {
   };
 
   return (
-    <main className="flex items-center justify-center min-h-screen px-4">
+    <main className="flex items-center justify-center px-4 py-20">
       <div className="w-full max-w-md">
-        <section className="w-full bg-white p-8 rounded-2xl shadow-lg border">
+        <section className="w-full bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
           <header className="text-center mb-8">
             <h1 className="text-3xl font-bold">프로필 설정</h1>
             <p className="mt-2 text-sm text-gray-600">
@@ -55,13 +55,13 @@ export default function ProfileSetupPage() {
                 onChange={(e) => setNickname(e.target.value)}
                 required
                 placeholder="닉네임"
-                className="w-full pl-10 pr-4 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
+              className="cursor-pointer w-full flex items-center justify-center py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
             >
               {isLoading ? (
                 <LoaderCircle className="animate-spin h-5 w-5" />
