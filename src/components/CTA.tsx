@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 
 export const CTA = () => {
   return (
-    <section className="py-20 md:py-8 overflow-hidden bg-background">
+    <section className="py-20 md:py-8 overflow-hidden bg-background relative">
       <div className="container mx-auto px-4 flex flex-col items-center">
         <div className="relative w-full max-w-5xl mx-auto">
           <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 -z-10">
