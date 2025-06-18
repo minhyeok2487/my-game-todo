@@ -65,17 +65,17 @@ export default function LoginPage() {
     }
   };
 
-  const handleSignInWithProvider = async (
-    provider: "google" | "github" | "kakao"
-  ) => {
-    setIsLoading(true);
-    await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${location.origin}/auth/callback`,
-      },
-    });
-  };
+  // const handleSignInWithProvider = async (
+  //   provider: "google" | "github" | "kakao"
+  // ) => {
+  //   setIsLoading(true);
+  //   await supabase.auth.signInWithOAuth({
+  //     provider,
+  //     options: {
+  //       redirectTo: `${location.origin}/auth/callback`,
+  //     },
+  //   });
+  // };
 
   return (
     <main className="flex items-center justify-center px-4 py-20">
