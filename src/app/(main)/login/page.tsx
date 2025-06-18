@@ -198,8 +198,9 @@ export default function LoginPage() {
 
         <div className="space-y-3">
           <button
-            onClick={() => handleSignInWithProvider("google")}
-            className="w-full flex items-center justify-center py-2.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
+            // onClick={() => handleSignInWithProvider("google")}
+            onClick={() => alert("개발 예정")}
+            className="cursor-pointer w-full flex items-center justify-center py-2.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
           >
             <Image
               src="/google-logo.svg"
