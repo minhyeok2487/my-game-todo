@@ -83,7 +83,7 @@ export default function SignUpPage() {
         <section className="w-full bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
           <header className="text-center mb-8">
             <h1 className="text-3xl font-bold">새로운 계정 만들기</h1>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-gray-400">
               My Game TODO와 함께 게임 라이프를 관리하세요.
             </p>
           </header>

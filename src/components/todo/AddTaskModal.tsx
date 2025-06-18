@@ -87,7 +87,7 @@ export const AddTaskModal = ({
               type="text"
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="예: 카오스 던전 2회"
+              placeholder="예: 일일 숙제"
               className="bg-[#111827] border border-[#374151] rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white"
               required
             />

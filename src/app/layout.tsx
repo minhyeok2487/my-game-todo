@@ -1,4 +1,4 @@
-// app/layout.tsx (수정된 최종 코드)
+// app/layout.tsx
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -22,15 +22,15 @@ export default function RootLayout({
   return (
     <html lang="ko" suppressHydrationWarning>
       <body
-        className={`${inter.className} bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors`}
+        className={`${inter.className} bg-background text-foreground transition-colors`}
       >
         <ThemeProvider
           attribute="data-theme"
           defaultTheme="system"
           enableSystem
         >
-          <header className="w-full p-4 flex justify-between items-center">
-            <Link href="/" className="text-xl font-bold text-cyan-500">
+          <header className="sticky top-0 z-50 w-full p-4 border-border bg-background/95 backdrop-blur-sm flex justify-between items-center">
+            <Link href="/" className="text-xl font-bold text-cyan-400">
               My Game TODO
             </Link>
             <div className="flex items-center gap-2">
