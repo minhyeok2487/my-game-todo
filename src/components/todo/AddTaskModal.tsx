@@ -1,25 +1,25 @@
 "use client";
 
 import { useState, useEffect } from "react";
-
-// 타입 정의 (변경 없음)
-export type Category = "daily" | "other" | "misc";
-export interface Task {
-  id: string;
-  text: string;
-  completed: boolean;
-  due_date: string | null;
-  category: Category;
-}
+import type { Category, Task } from "@/app/(main)/todo/page";
 
 interface AddTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
-  modalData: { gameId: string; category: Category; title: string };
+  modalData: {
+    gameId: string;
+    category: Category;
+    title: string;
+  };
   onAddTask: (
     gameId: string,
     category: Category,
     task: Omit<Task, "id" | "category" | "completed">
+  ) => void;
+  taskToEdit?: Task | null;
+  onUpdateTask: (
+    taskId: string,
+    updates: Partial<Omit<Task, "id" | "category" | "completed">>
   ) => void;
 }
 
@@ -28,69 +28,106 @@ export const AddTaskModal = ({
   onClose,
   modalData,
   onAddTask,
+  taskToEdit,
+  onUpdateTask,
 }: AddTaskModalProps) => {
   const [text, setText] = useState("");
   const [dueDateType, setDueDateType] = useState<"absolute" | "relative">(
     "absolute"
   );
   const [absoluteDueDate, setAbsoluteDueDate] = useState("");
-
-  // ⭐️ 1. 'minutes' 상태 제거
   const [duration, setDuration] = useState({ days: 7, hours: 0 });
+
+  const isEditMode = !!taskToEdit;
 
   useEffect(() => {
     if (isOpen) {
-      setText("");
-      setDueDateType("absolute");
-      const defaultAbsoluteDate = new Date();
-      defaultAbsoluteDate.setDate(defaultAbsoluteDate.getDate() + 7);
-      defaultAbsoluteDate.setHours(6, 0, 0, 0);
-      const year = defaultAbsoluteDate.getFullYear();
-      const month = String(defaultAbsoluteDate.getMonth() + 1).padStart(2, "0");
-      const day = String(defaultAbsoluteDate.getDate()).padStart(2, "0");
-      const hours = String(defaultAbsoluteDate.getHours()).padStart(2, "0");
-      const minutes = String(defaultAbsoluteDate.getMinutes()).padStart(2, "0");
-      setAbsoluteDueDate(`${year}-${month}-${day}T${hours}:${minutes}`);
+      if (isEditMode && taskToEdit) {
+        setText(taskToEdit.text);
+        if (taskToEdit.due_date) {
+          setDueDateType("absolute");
+          const localDate = new Date(taskToEdit.due_date);
+          const year = localDate.getFullYear();
+          const month = String(localDate.getMonth() + 1).padStart(2, "0");
+          const day = String(localDate.getDate()).padStart(2, "0");
+          const hours = String(localDate.getHours()).padStart(2, "0");
+          const minutes = String(localDate.getMinutes()).padStart(2, "0");
+          setAbsoluteDueDate(`${year}-${month}-${day}T${hours}:${minutes}`);
+        } else {
+          setAbsoluteDueDate("");
+        }
+      } else {
+        setText("");
+        setDueDateType("absolute");
+        const defaultDueDate = new Date();
+        defaultDueDate.setDate(defaultDueDate.getDate() + 7);
+        defaultDueDate.setHours(6, 0, 0, 0);
 
-      setDuration({ days: 7, hours: 0 });
+        const year = defaultDueDate.getFullYear();
+        const month = String(defaultDueDate.getMonth() + 1).padStart(2, "0");
+        const day = String(defaultDueDate.getDate()).padStart(2, "0");
+        const hours = String(defaultDueDate.getHours()).padStart(2, "0");
+        const minutes = String(defaultDueDate.getMinutes()).padStart(2, "0");
+        setAbsoluteDueDate(`${year}-${month}-${day}T${hours}:${minutes}`);
+        setDuration({ days: 7, hours: 0 });
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, isEditMode, taskToEdit]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;
+
     let finalDueDate: string | null = null;
-    if (modalData.category === "other") {
+    if (
+      modalData.category === "other" &&
+      (absoluteDueDate || duration.days > 0 || duration.hours > 0)
+    ) {
       if (dueDateType === "absolute") {
-        finalDueDate = new Date(absoluteDueDate).toISOString();
+        if (absoluteDueDate)
+          finalDueDate = new Date(absoluteDueDate).toISOString();
       } else {
         const now = new Date();
         now.setDate(now.getDate() + Number(duration.days || 0));
         now.setHours(now.getHours() + Number(duration.hours || 0));
-
         finalDueDate = now.toISOString();
       }
     }
-    onAddTask(modalData.gameId, modalData.category, {
-      text,
-      due_date: finalDueDate,
-    });
+
+    if (isEditMode) {
+      onUpdateTask(taskToEdit.id, { text, due_date: finalDueDate });
+    } else {
+      onAddTask(modalData.gameId, modalData.category, {
+        text,
+        due_date: finalDueDate,
+      });
+    }
+
     onClose();
   };
 
   if (!isOpen) return null;
 
   return (
+    // ⭐️ 배경(Backdrop) div
     <div
       className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
-      onClick={onClose}
+      // ⭐️⭐️⭐️ 핵심 수정 사항 ⭐️⭐️⭐️
+      // 클릭 이벤트의 target과 currentTarget이 같을 때만 onClose를 호출합니다.
+      // 즉, 순수하게 배경을 클릭했을 때만 모달이 닫히도록 합니다.
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
     >
+      {/* 모달 컨텐츠 div */}
       <div
         className="bg-[#1F2937] p-8 rounded-lg w-full max-w-md border border-[#374151]"
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()} // 이 부분은 그대로 유지합니다.
       >
         <h2 className="text-2xl font-bold mb-6 text-white">
-          {modalData.title}
+          {isEditMode ? "숙제 수정" : modalData.title}
         </h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
@@ -209,7 +246,7 @@ export const AddTaskModal = ({
               type="submit"
               className="cursor-pointer px-5 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-600 text-white font-semibold"
             >
-              추가하기
+              {isEditMode ? "수정하기" : "추가하기"}
             </button>
           </div>
         </form>
