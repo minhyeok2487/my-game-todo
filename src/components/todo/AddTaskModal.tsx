@@ -1,25 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-// page.tsx에서 타입을 직접 가져오는 대신, 여기서 직접 정의하여 의존성을 줄입니다.
+
+// 타입 정의 (변경 없음)
 export type Category = "daily" | "other" | "misc";
 export interface Task {
   id: string;
   text: string;
   completed: boolean;
-  due_date: string | null; // DB 컬럼명과 일치
+  due_date: string | null;
   category: Category;
 }
 
 interface AddTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
-  modalData: {
-    gameId: string;
-    category: Category;
-    title: string;
-  };
-  // 전달하는 데이터 타입을 명확히 합니다.
+  modalData: { gameId: string; category: Category; title: string };
   onAddTask: (
     gameId: string,
     category: Category,
@@ -34,32 +30,51 @@ export const AddTaskModal = ({
   onAddTask,
 }: AddTaskModalProps) => {
   const [text, setText] = useState("");
-  // 내부 상태는 camelCase를 사용
-  const [dueDate, setDueDate] = useState("");
+  const [dueDateType, setDueDateType] = useState<"absolute" | "relative">(
+    "absolute"
+  );
+  const [absoluteDueDate, setAbsoluteDueDate] = useState("");
+
+  // ⭐️ 1. 'minutes' 상태 제거
+  const [duration, setDuration] = useState({ days: 7, hours: 0 });
 
   useEffect(() => {
     if (isOpen) {
       setText("");
-      if (modalData.category === "other") {
-        const defaultDueDate = new Date();
-        defaultDueDate.setDate(defaultDueDate.getDate() + 7);
-        setDueDate(defaultDueDate.toISOString().split("T")[0]);
-      } else {
-        setDueDate("");
-      }
+      setDueDateType("absolute");
+      const defaultAbsoluteDate = new Date();
+      defaultAbsoluteDate.setDate(defaultAbsoluteDate.getDate() + 7);
+      defaultAbsoluteDate.setHours(6, 0, 0, 0);
+      const year = defaultAbsoluteDate.getFullYear();
+      const month = String(defaultAbsoluteDate.getMonth() + 1).padStart(2, "0");
+      const day = String(defaultAbsoluteDate.getDate()).padStart(2, "0");
+      const hours = String(defaultAbsoluteDate.getHours()).padStart(2, "0");
+      const minutes = String(defaultAbsoluteDate.getMinutes()).padStart(2, "0");
+      setAbsoluteDueDate(`${year}-${month}-${day}T${hours}:${minutes}`);
+
+      setDuration({ days: 7, hours: 0 });
     }
-  }, [isOpen, modalData]);
+  }, [isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;
+    let finalDueDate: string | null = null;
+    if (modalData.category === "other") {
+      if (dueDateType === "absolute") {
+        finalDueDate = new Date(absoluteDueDate).toISOString();
+      } else {
+        const now = new Date();
+        now.setDate(now.getDate() + Number(duration.days || 0));
+        now.setHours(now.getHours() + Number(duration.hours || 0));
 
-    // ⭐️ onAddTask에 전달하는 객체의 키를 'due_date'로 수정합니다.
+        finalDueDate = now.toISOString();
+      }
+    }
     onAddTask(modalData.gameId, modalData.category, {
       text,
-      due_date: modalData.category === "other" ? dueDate : null,
+      due_date: finalDueDate,
     });
-
     onClose();
   };
 
@@ -87,25 +102,98 @@ export const AddTaskModal = ({
               type="text"
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="예: 일일 숙제"
-              className="bg-[#111827] border border-[#374151] rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white"
               required
+              className="bg-[#111827] border border-[#374151] rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white"
             />
           </div>
 
           {modalData.category === "other" && (
-            <div className="flex flex-col gap-2">
-              <label htmlFor="due-date" className="font-semibold text-gray-300">
-                마감일
-              </label>
-              <input
-                id="due-date"
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                className="bg-[#111827] border border-[#374151] rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white [color-scheme:dark]"
-                required
-              />
+            <div className="flex flex-col gap-4 p-4 rounded-md bg-black/20 border border-gray-700">
+              <div className="flex gap-2 bg-gray-800 p-1 rounded-md">
+                <button
+                  type="button"
+                  onClick={() => setDueDateType("absolute")}
+                  className={`flex-1 p-2 rounded text-sm font-semibold transition-colors ${
+                    dueDateType === "absolute"
+                      ? "bg-cyan-500 text-white"
+                      : "bg-transparent text-gray-300 hover:bg-gray-700"
+                  }`}
+                >
+                  날짜/시간 지정
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDueDateType("relative")}
+                  className={`flex-1 p-2 rounded text-sm font-semibold transition-colors ${
+                    dueDateType === "relative"
+                      ? "bg-cyan-500 text-white"
+                      : "bg-transparent text-gray-300 hover:bg-gray-700"
+                  }`}
+                >
+                  기간으로 설정
+                </button>
+              </div>
+
+              {dueDateType === "absolute" ? (
+                <div className="flex flex-col gap-2">
+                  <label
+                    htmlFor="due-date-abs"
+                    className="font-semibold text-gray-300 text-sm"
+                  >
+                    마감일
+                  </label>
+                  <input
+                    id="due-date-abs"
+                    type="datetime-local"
+                    value={absoluteDueDate}
+                    onChange={(e) => setAbsoluteDueDate(e.target.value)}
+                    className="bg-[#111827] border border-[#374151] rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white [color-scheme:dark]"
+                    required
+                  />
+                </div>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  <label className="font-semibold text-gray-300 text-sm">
+                    마감까지 남은 시간
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <span className="text-xs text-center block mb-1 text-gray-400">
+                        일
+                      </span>
+                      <input
+                        type="number"
+                        value={duration.days}
+                        onChange={(e) =>
+                          setDuration((d) => ({
+                            ...d,
+                            days: Number(e.target.value),
+                          }))
+                        }
+                        className="bg-[#111827] border border-[#374151] rounded-md p-3 w-full outline-none text-white text-center focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        placeholder="0"
+                      />
+                    </div>
+                    <div>
+                      <span className="text-xs text-center block mb-1 text-gray-400">
+                        시간
+                      </span>
+                      <input
+                        type="number"
+                        value={duration.hours}
+                        onChange={(e) =>
+                          setDuration((d) => ({
+                            ...d,
+                            hours: Number(e.target.value),
+                          }))
+                        }
+                        className="bg-[#111827] border border-[#374151] rounded-md p-3 w-full outline-none text-white text-center focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        placeholder="0"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

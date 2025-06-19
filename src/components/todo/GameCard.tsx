@@ -22,16 +22,19 @@ const TaskItem = ({
   onToggle: () => void;
   onDelete: () => void;
 }) => {
-  // D-day 계산 함수 (변경 없음)
+  // D-day 계산 함수
   const getDday = (dueDate: string | null) => {
     if (!dueDate) return null;
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0); // 오늘 날짜의 자정
     const due = new Date(dueDate);
-    due.setHours(0, 0, 0, 0);
+    due.setHours(0, 0, 0, 0); // 마감일의 자정
     const diffTime = due.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    // 완료된 항목은 D-day를 표시하지 않음
     if (task.completed) return null;
+
     if (diffDays < 0)
       return (
         <span className="text-xs text-red-500 font-semibold">
@@ -47,12 +50,12 @@ const TaskItem = ({
 
   return (
     <li className="flex items-center justify-between py-1.5 group">
-      {/* ⭐️ 1. 체크박스와 텍스트를 하나의 클릭 가능한 div로 묶습니다. */}
+      {/* 1. 체크박스와 텍스트를 하나의 클릭 가능한 div로 묶습니다. */}
       <div
         className="flex items-center gap-2 flex-grow cursor-pointer"
-        onClick={onToggle} // ⭐️ 2. 그룹 전체에 onToggle 이벤트를 적용합니다.
+        onClick={onToggle} // 2. 그룹 전체에 onToggle 이벤트를 적용합니다.
       >
-        {/* ⭐️ 3. 기존 button을 div로 변경하여 중첩된 클릭 요소를 피합니다. (웹 접근성 향상) */}
+        {/* 3. 기존 button을 div로 변경하여 중첩된 클릭 요소를 피합니다. (웹 접근성 향상) */}
         <div
           className={`w-5 h-5 rounded flex items-center justify-center border-2 shrink-0 transition-colors ${
             task.completed
@@ -82,8 +85,12 @@ const TaskItem = ({
 
       {/* 삭제 버튼 */}
       <button
-        onClick={onDelete}
+        onClick={(e) => {
+          e.stopPropagation(); // 이벤트 버블링 방지
+          onDelete();
+        }}
         className="cursor-pointer text-gray-500 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity ml-2"
+        aria-label={`${task.text} 숙제 삭제`}
       >
         <X size={16} />
       </button>
@@ -101,7 +108,7 @@ export const GameCard = ({
 }: GameCardProps) => {
   const categories: { key: Category; title: string }[] = [
     { key: "daily", title: "일일 숙제" },
-    { key: "other", title: "주간 숙제" },
+    { key: "other", title: "기간 숙제" },
     { key: "misc", title: "기타" },
   ];
 
