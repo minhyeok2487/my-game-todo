@@ -150,7 +150,7 @@ export const AddTaskModal = ({
                 <button
                   type="button"
                   onClick={() => setDueDateType("absolute")}
-                  className={`flex-1 p-2 rounded text-sm font-semibold transition-colors ${
+                  className={`cursor-pointer flex-1 p-2 rounded text-sm font-semibold transition-colors ${
                     dueDateType === "absolute"
                       ? "bg-cyan-500 text-white"
                       : "bg-transparent text-gray-300 hover:bg-gray-700"
@@ -161,7 +161,7 @@ export const AddTaskModal = ({
                 <button
                   type="button"
                   onClick={() => setDueDateType("relative")}
-                  className={`flex-1 p-2 rounded text-sm font-semibold transition-colors ${
+                  className={`cursor-pointer flex-1 p-2 rounded text-sm font-semibold transition-colors ${
                     dueDateType === "relative"
                       ? "bg-cyan-500 text-white"
                       : "bg-transparent text-gray-300 hover:bg-gray-700"
@@ -184,7 +184,7 @@ export const AddTaskModal = ({
                     type="datetime-local"
                     value={absoluteDueDate}
                     onChange={(e) => setAbsoluteDueDate(e.target.value)}
-                    className="bg-[#111827] border border-[#374151] rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white [color-scheme:dark]"
+                    className="cursor-pointer bg-[#111827] border border-[#374151] rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white [color-scheme:dark]"
                     required
                   />
                 </div>
