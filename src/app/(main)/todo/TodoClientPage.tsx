@@ -1,15 +1,22 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { DndContext, closestCenter, type DragEndEvent } from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  rectSortingStrategy,
+} from "@dnd-kit/sortable";
 import type { User } from "@supabase/supabase-js";
-import type { Game, Task, Category } from "./page"; // page.tsx에서 타입 임포트
+import type { Game, Task, Category } from "./page";
 import { createClient } from "@/lib/supabase/client";
-
 import { GameCard } from "@/components/todo/GameCard";
 import { AddGameCard } from "@/components/todo/AddGameCard";
 import { SelectGameModal } from "@/components/todo/SelectGameModal";
 import { AddGameModal } from "@/components/todo/AddGameModal";
 import { AddTaskModal } from "@/components/todo/AddTaskModal";
+import { FloatingMenu } from "@/components/todo/FloatingMenu";
+import { Save } from "lucide-react";
 
 interface TodoClientPageProps {
   serverGames: Game[];
@@ -21,13 +28,10 @@ export default function TodoClientPage({
   user,
 }: TodoClientPageProps) {
   const [games, setGames] = useState<Game[]>(serverGames);
-
-  // 모달 상태 관리
   const [isSelectGameModalOpen, setSelectGameModalOpen] = useState(false);
   const [isAddGameModalOpen, setAddGameModalOpen] = useState(false);
   const [isTaskModalOpen, setTaskModalOpen] = useState(false);
-
-  // 모달에 전달할 데이터 상태 관리
+  const [isReorderMode, setIsReorderMode] = useState(false);
   const [initialGameData, setInitialGameData] = useState<{
     name: string;
     imageUrl: string;
@@ -37,19 +41,18 @@ export default function TodoClientPage({
     category: Category;
     title: string;
   } | null>(null);
-  const [editingTask, setEditingTask] = useState<Task | null>(null); // 수정할 Task 관리 상태
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   const supabase = createClient();
 
-  // 데이터를 다시 불러오는 함수
   const fetchGames = useCallback(async () => {
     const { data, error } = await supabase
       .from("games")
       .select(
-        `id, name, character_name, image_url, tasks ( id, text, completed, due_date, category )`
+        `id, name, character_name, image_url, order, tasks ( id, text, completed, due_date, category )`
       )
       .eq("user_id", user.id)
-      .order("created_at", { ascending: true });
+      .order("order", { ascending: true });
 
     if (error) {
       console.error("데이터 재조회 실패:", error.message);
@@ -58,7 +61,6 @@ export default function TodoClientPage({
     }
   }, [supabase, user.id]);
 
-  // 게임 추가 모달 열기 관련 핸들러
   const handleOpenSelectGameModal = () => setSelectGameModalOpen(true);
 
   const handleSelectPredefinedGame = (game: {
@@ -76,21 +78,20 @@ export default function TodoClientPage({
     setAddGameModalOpen(true);
   };
 
-  // 숙제 추가/수정 모달 열기 관련 핸들러
   const handleOpenTaskModal = (
     gameId: string,
     category: Category,
     title: string
   ) => {
-    setEditingTask(null); // '추가' 모드이므로 수정 상태는 null
+    setEditingTask(null);
     setTaskModalData({ gameId, category, title });
     setTaskModalOpen(true);
   };
 
   const handleOpenEditModal = (task: Task) => {
-    setEditingTask(task); // 수정할 task를 상태에 저장
+    setEditingTask(task);
     const gameId = games.find((g) => g.tasks.some((t) => t.id === task.id))?.id;
-    if (!gameId) return; // 혹시 모를 에러 방지
+    if (!gameId) return;
 
     setTaskModalData({
       gameId: gameId,
@@ -106,25 +107,32 @@ export default function TodoClientPage({
     setTaskModalOpen(true);
   };
 
-  // 데이터 CUD (생성, 업데이트, 삭제) 핸들러
   const handleAddGame = async (
-    newGameData: Omit<Game, "id" | "tasks" | "created_at">
+    newGameData: Omit<Game, "id" | "tasks" | "created_at" | "order">
   ) => {
-    const { data: newGame, error } = await supabase
+    const maxOrder = games.reduce(
+      (max, game) => Math.max(max, game.order || 0),
+      0
+    );
+    const { error } = await supabase
       .from("games")
-      .insert({ ...newGameData, user_id: user.id })
-      .select()
-      .single();
+      .insert({ ...newGameData, user_id: user.id, order: maxOrder + 1 });
 
-    if (error) alert("게임 추가 실패: " + error.message);
-    else if (newGame) setGames([...games, { ...newGame, tasks: [] }]);
+    if (error) {
+      alert("게임 추가 실패: " + error.message);
+    } else {
+      await fetchGames();
+    }
   };
 
   const handleDeleteGame = async (gameId: string) => {
     if (confirm("정말로 이 게임 카드를 삭제하시겠습니까?")) {
       const { error } = await supabase.from("games").delete().eq("id", gameId);
-      if (error) alert("게임 삭제 실패: " + error.message);
-      else setGames(games.filter((game) => game.id !== gameId));
+      if (error) {
+        alert("게임 삭제 실패: " + error.message);
+      } else {
+        setGames(games.filter((game) => game.id !== gameId));
+      }
     }
   };
 
@@ -133,21 +141,16 @@ export default function TodoClientPage({
     category: Category,
     taskData: Omit<Task, "id" | "category" | "completed">
   ) => {
-    const { data: newTask, error } = await supabase
-      .from("tasks")
-      .insert({
-        ...taskData,
-        completed: false,
-        game_id: gameId,
-        user_id: user.id,
-        category,
-      })
-      .select()
-      .single();
-
+    const { error } = await supabase.from("tasks").insert({
+      ...taskData,
+      completed: false,
+      game_id: gameId,
+      user_id: user.id,
+      category,
+    });
     if (error) {
       alert("숙제 추가 실패: " + error.message);
-    } else if (newTask) {
+    } else {
       await fetchGames();
     }
   };
@@ -177,7 +180,6 @@ export default function TodoClientPage({
       .from("tasks")
       .update({ completed: !taskToToggle.completed })
       .eq("id", taskId);
-
     if (error) {
       alert("상태 변경 실패: " + error.message);
     } else {
@@ -194,22 +196,75 @@ export default function TodoClientPage({
     }
   };
 
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      setGames((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
+
+  const handleSaveOrder = async () => {
+    const updates = games.map((game, index) =>
+      supabase.from("games").update({ order: index }).eq("id", game.id)
+    );
+    const results = await Promise.all(updates);
+    const firstError = results.find((result) => result.error);
+
+    if (firstError && firstError.error) {
+      alert("순서 저장에 실패했습니다: " + firstError.error.message);
+    } else {
+      alert("순서가 저장되었습니다.");
+      setIsReorderMode(false);
+    }
+  };
+
+  const handleCancelReorder = () => {
+    setIsReorderMode(false);
+    fetchGames(); // 순서 변경 전 상태로 되돌리기 위해 데이터를 다시 불러옵니다.
+  };
+
   return (
-    <div className="container max-w-screen-2xl mx-auto p-4 md:p-6">
-      <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-        {games.map((game) => (
-          <GameCard
-            key={game.id}
-            game={game}
-            onDeleteGame={handleDeleteGame}
-            onOpenTaskModal={handleOpenTaskModal}
-            onEditTask={handleOpenEditModal}
-            onToggleTask={handleToggleTask}
-            onDeleteTask={handleDeleteTask}
-          />
-        ))}
-        <AddGameCard onOpenModal={handleOpenSelectGameModal} />
-      </main>
+    <div className="container max-w-screen-2xl mx-auto p-4 md:p-6 relative">
+      {isReorderMode && (
+        <div className="fixed top-18 left-0 right-0 bg-cyan-800/80 backdrop-blur-sm p-1 flex justify-center items-center gap-4 z-40">
+          <p className="text-white font-semibold">카드의 순서를 변경하세요</p>
+          <button
+            onClick={handleSaveOrder}
+            className="cursor-pointer bg-cyan-500 text-white px-5 py-1 rounded-lg shadow-lg hover:bg-cyan-600 flex items-center gap-2 font-bold"
+          >
+            <Save size={18} />
+            순서 저장
+          </button>
+        </div>
+      )}
+      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext
+          items={games.map((g) => g.id)}
+          strategy={rectSortingStrategy}
+        >
+          <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            {games.map((game) => (
+              <GameCard
+                key={game.id}
+                game={game}
+                onDeleteGame={handleDeleteGame}
+                onOpenTaskModal={handleOpenTaskModal}
+                onEditTask={handleOpenEditModal}
+                onToggleTask={handleToggleTask}
+                onDeleteTask={handleDeleteTask}
+                isReorderMode={isReorderMode}
+              />
+            ))}
+            {!isReorderMode && (
+              <AddGameCard onOpenModal={handleOpenSelectGameModal} />
+            )}
+          </main>
+        </SortableContext>
+      </DndContext>
 
       <SelectGameModal
         isOpen={isSelectGameModalOpen}
@@ -223,7 +278,6 @@ export default function TodoClientPage({
         onAddGame={handleAddGame}
         initialData={initialGameData}
       />
-
       {taskModalData && (
         <AddTaskModal
           isOpen={isTaskModalOpen}
@@ -237,6 +291,13 @@ export default function TodoClientPage({
           onUpdateTask={handleUpdateTask}
         />
       )}
+
+      <FloatingMenu
+        isReorderMode={isReorderMode}
+        onToggleReorderMode={() => setIsReorderMode((prev) => !prev)}
+        onCancelReorder={handleCancelReorder}
+        onSaveOrder={handleSaveOrder}
+      />
     </div>
   );
 }

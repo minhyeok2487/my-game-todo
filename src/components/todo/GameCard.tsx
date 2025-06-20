@@ -1,9 +1,12 @@
 "use client";
 
-import type { Game, Category, Task } from "@/app/(main)/todo/page";
-import { Plus, X, Check, Calendar, Pencil } from "lucide-react"; // ⭐️ 1. Pencil 아이콘 임포트
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
-// ⭐️ 2. GameCardProps 인터페이스에 onEditTask 추가
+import type { Game, Category, Task } from "@/app/(main)/todo/page";
+import { Plus, X, Check, Calendar, Pencil, GripVertical } from "lucide-react";
+
+// GameCard가 받을 props 정의
 interface GameCardProps {
   game: Game;
   onDeleteGame: (gameId: string) => void;
@@ -11,9 +14,10 @@ interface GameCardProps {
   onToggleTask: (taskId: string) => void;
   onDeleteTask: (taskId: string) => void;
   onEditTask: (task: Task) => void;
+  isReorderMode: boolean;
 }
 
-// ⭐️ 3. TaskItem 컴포넌트에 onEdit prop 추가
+// TaskItem 하위 컴포넌트
 const TaskItem = ({
   task,
   onToggle,
@@ -25,7 +29,7 @@ const TaskItem = ({
   onDelete: () => void;
   onEdit: () => void;
 }) => {
-  // D-day 계산 함수 (변경 없음)
+  // D-day 계산 함수
   const getDday = (dueDate: string | null) => {
     if (!dueDate) return null;
     const today = new Date();
@@ -81,7 +85,6 @@ const TaskItem = ({
         </span>
       )}
 
-      {/* ⭐️ 4. 수정 및 삭제 버튼 그룹 */}
       <div className="flex items-center ml-2">
         <button
           onClick={(e) => {
@@ -115,8 +118,27 @@ export const GameCard = ({
   onOpenTaskModal,
   onToggleTask,
   onDeleteTask,
-  onEditTask, // ⭐️ 5. onEditTask prop 받기
+  onEditTask,
+  isReorderMode,
 }: GameCardProps) => {
+  // dnd-kit 훅
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: game.id, disabled: !isReorderMode });
+
+  // 드래그 중 스타일 적용
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 10 : 1,
+  };
+
   const categories: { key: Category; title: string }[] = [
     { key: "daily", title: "일일 숙제" },
     { key: "other", title: "기간 숙제" },
@@ -124,7 +146,23 @@ export const GameCard = ({
   ];
 
   return (
-    <div className="bg-[#1F2937] rounded-lg border border-[#374151] flex flex-col shadow-lg min-h-[400px]">
+    <div
+      ref={setNodeRef} // ⭐️ dnd-kit 참조 연결
+      style={style} // ⭐️ dnd-kit 스타일 적용
+      {...attributes} // ⭐️ dnd-kit 속성 적용
+      className="bg-[#1F2937] rounded-lg border border-[#374151] flex flex-col shadow-lg min-h-[400px] relative touch-none"
+    >
+      {/* 순서 변경 모드일 때만 드래그 핸들 표시 */}
+      {isReorderMode && (
+        <div
+          {...listeners} // ⭐️ 이 부분만 잡고 드래그 가능
+          className="absolute top-2 left-2 p-1.5 bg-black/50 rounded-full text-white cursor-grab active:cursor-grabbing z-20"
+          aria-label="순서 변경"
+        >
+          <GripVertical size={20} />
+        </div>
+      )}
+
       <div
         className="h-36 bg-cover bg-center rounded-t-lg relative"
         style={{
@@ -133,13 +171,16 @@ export const GameCard = ({
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-        <button
-          onClick={() => onDeleteGame(game.id)}
-          className="cursor-pointer absolute top-2 right-2 p-1.5 bg-black/50 rounded-full text-white hover:bg-red-500 transition-colors z-10"
-          aria-label="게임 카드 삭제"
-        >
-          <X size={18} />
-        </button>
+        {/* 순서 변경 모드에서는 삭제 버튼 비활성화 */}
+        {!isReorderMode && (
+          <button
+            onClick={() => onDeleteGame(game.id)}
+            className="cursor-pointer absolute top-2 right-2 p-1.5 bg-black/50 rounded-full text-white hover:bg-red-500 transition-colors z-10"
+            aria-label="게임 카드 삭제"
+          >
+            <X size={18} />
+          </button>
+        )}
         <div className="absolute bottom-0 left-0 p-4">
           <h3 className="text-2xl font-bold text-white shadow-black/50 [text-shadow:_0_1px_3px_var(--tw-shadow-color)]">
             {game.name}
@@ -164,17 +205,20 @@ export const GameCard = ({
                     task={task}
                     onToggle={() => onToggleTask(task.id)}
                     onDelete={() => onDeleteTask(task.id)}
-                    onEdit={() => onEditTask(task)} // ⭐️ 6. onEdit 핸들러 연결
+                    onEdit={() => onEditTask(task)}
                   />
                 ))}
             </ul>
-            <button
-              onClick={() => onOpenTaskModal(game.id, key, `새 ${title}`)}
-              className="cursor-pointer mt-2 flex items-center gap-1 text-sm text-gray-400 hover:text-cyan-400 transition-colors w-full"
-            >
-              <Plus size={16} />
-              <span>숙제 추가</span>
-            </button>
+            {/* 순서 변경 모드에서는 숙제 추가 버튼 비활성화 */}
+            {!isReorderMode && (
+              <button
+                onClick={() => onOpenTaskModal(game.id, key, `새 ${title}`)}
+                className="cursor-pointer mt-2 flex items-center gap-1 text-sm text-gray-400 hover:text-cyan-400 transition-colors w-full"
+              >
+                <Plus size={16} />
+                <span>숙제 추가</span>
+              </button>
+            )}
           </div>
         ))}
       </div>
