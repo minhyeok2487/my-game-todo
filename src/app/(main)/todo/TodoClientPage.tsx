@@ -282,18 +282,16 @@ export default function TodoClientPage({
   };
 
   return (
-    <div className="container max-w-screen-2xl mx-auto p-4 md:p-6 relative">
+    <div className="container max-w-screen-2xl mx-auto relative">
       {isReorderMode && (
-        <div className="fixed top-18 left-0 right-0 backdrop-blur-sm p-1 flex justify-center items-center gap-4 z-40">
-          <p className="text-white font-semibold">카드의 순서를 변경하세요</p>
-          <button
-            onClick={handleSaveOrder}
-            className="cursor-pointer bg-cyan-500 text-white px-5 py-1 rounded-lg shadow-lg hover:bg-cyan-600 flex items-center gap-2 font-bold"
-          >
-            <Save size={18} />
-            순서 저장
-          </button>
-        </div>
+        <button
+          onClick={handleSaveOrder}
+          className="fixed top-25 right-18 z-40 cursor-pointer bg-cyan-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-cyan-600 flex items-center gap-2 font-bold transition-transform hover:scale-105"
+          aria-label="순서 저장"
+        >
+          <Save size={18} />
+          <span>순서 저장</span>
+        </button>
       )}
 
       <div className="mb-6 flex justify-center">
@@ -322,7 +320,6 @@ export default function TodoClientPage({
       </div>
 
       {viewMode === "game" ? (
-        // --- 기존 게임별 보기 ---
         <DndContext
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
