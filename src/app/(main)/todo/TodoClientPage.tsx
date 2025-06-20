@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { DndContext, closestCenter, type DragEndEvent } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -16,6 +16,7 @@ import { SelectGameModal } from "@/components/todo/SelectGameModal";
 import { AddGameModal } from "@/components/todo/AddGameModal";
 import { AddTaskModal } from "@/components/todo/AddTaskModal";
 import { FloatingMenu } from "@/components/todo/FloatingMenu";
+import { SortedTaskCard } from "@/components/todo/SortedTaskCard";
 import { Save } from "lucide-react";
 
 interface TodoClientPageProps {
@@ -28,6 +29,7 @@ export default function TodoClientPage({
   user,
 }: TodoClientPageProps) {
   const [games, setGames] = useState<Game[]>(serverGames);
+  const [viewMode, setViewMode] = useState<"game" | "sorted">("game");
   const [isSelectGameModalOpen, setSelectGameModalOpen] = useState(false);
   const [isAddGameModalOpen, setAddGameModalOpen] = useState(false);
   const [isTaskModalOpen, setTaskModalOpen] = useState(false);
@@ -60,6 +62,46 @@ export default function TodoClientPage({
       setGames(data as Game[]);
     }
   }, [supabase, user.id]);
+
+  // 마감일 순으로 정렬된 숙제 목록 데이터 가공
+  const sortedTasks = useMemo(() => {
+    return (
+      games
+        .flatMap((game) =>
+          game.tasks.map((task) => ({
+            ...task,
+            gameName: game.name,
+            characterName: game.character_name,
+            gameImageUrl: game.image_url,
+          }))
+        )
+        // 1. 필터링 조건 수정: 미완료이면서, (일일 숙제 이거나 || 마감일이 있는 숙제)
+        .filter(
+          (task) =>
+            !task.completed && (task.category === "daily" || task.due_date)
+        )
+        // 2. 정렬 로직 수정
+        .sort((a, b) => {
+          // --- 1순위: '일일 숙제'를 최상단으로 ---
+          const isADaily = a.category === "daily";
+          const isBDaily = b.category === "daily";
+
+          if (isADaily && !isBDaily) return -1; // a(일일)가 b(일일 아님)보다 먼저
+          if (!isADaily && isBDaily) return 1; // b(일일)가 a(일일 아님)보다 먼저
+
+          // --- 2순위: 둘 다 '일일 숙제'가 아닐 경우, 마감일 순으로 정렬 ---
+          // (필터링 조건에 의해 둘 다 due_date가 있는 것이 보장됨)
+          if (!isADaily && !isBDaily) {
+            return (
+              new Date(a.due_date!).getTime() - new Date(b.due_date!).getTime()
+            );
+          }
+
+          // --- 둘 다 '일일 숙제'일 경우, 순서 변경 없음 ---
+          return 0;
+        })
+    );
+  }, [games]);
 
   const handleOpenSelectGameModal = () => setSelectGameModalOpen(true);
 
@@ -176,6 +218,18 @@ export default function TodoClientPage({
       .find((t) => t.id === taskId);
     if (!taskToToggle) return;
 
+    // '마감순 보기'에서는 체크하면 바로 UI에서 숨기기 (Optimistic Update)
+    if (viewMode === "sorted") {
+      setGames((currentGames) =>
+        currentGames.map((game) => ({
+          ...game,
+          tasks: game.tasks.map((task) =>
+            task.id === taskId ? { ...task, completed: true } : task
+          ),
+        }))
+      );
+    }
+
     const { error } = await supabase
       .from("tasks")
       .update({ completed: !taskToToggle.completed })
@@ -230,7 +284,7 @@ export default function TodoClientPage({
   return (
     <div className="container max-w-screen-2xl mx-auto p-4 md:p-6 relative">
       {isReorderMode && (
-        <div className="fixed top-18 left-0 right-0 bg-cyan-800/80 backdrop-blur-sm p-1 flex justify-center items-center gap-4 z-40">
+        <div className="fixed top-18 left-0 right-0 backdrop-blur-sm p-1 flex justify-center items-center gap-4 z-40">
           <p className="text-white font-semibold">카드의 순서를 변경하세요</p>
           <button
             onClick={handleSaveOrder}
@@ -241,30 +295,73 @@ export default function TodoClientPage({
           </button>
         </div>
       )}
-      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext
-          items={games.map((g) => g.id)}
-          strategy={rectSortingStrategy}
+
+      <div className="mb-6 flex justify-center">
+        <div className="bg-gray-200 dark:bg-gray-800 p-1 rounded-full flex items-center">
+          <button
+            onClick={() => setViewMode("game")}
+            className={`cursor-pointer px-4 py-1.5 text-sm font-semibold rounded-full ${
+              viewMode === "game"
+                ? "bg-white dark:bg-gray-600 text-gray-800 dark:text-white"
+                : "text-gray-500"
+            }`}
+          >
+            게임별 보기
+          </button>
+          <button
+            onClick={() => setViewMode("sorted")}
+            className={`cursor-pointer px-4 py-1.5 text-sm font-semibold rounded-full ${
+              viewMode === "sorted"
+                ? "bg-white dark:bg-gray-600 text-gray-800 dark:text-white"
+                : "text-gray-500"
+            }`}
+          >
+            마감순 보기
+          </button>
+        </div>
+      </div>
+
+      {viewMode === "game" ? (
+        // --- 기존 게임별 보기 ---
+        <DndContext
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
         >
-          <main className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6">
-            {games.map((game) => (
-              <GameCard
-                key={game.id}
-                game={game}
-                onDeleteGame={handleDeleteGame}
-                onOpenTaskModal={handleOpenTaskModal}
-                onEditTask={handleOpenEditModal}
-                onToggleTask={handleToggleTask}
-                onDeleteTask={handleDeleteTask}
-                isReorderMode={isReorderMode}
-              />
-            ))}
-            {!isReorderMode && (
-              <AddGameCard onOpenModal={handleOpenSelectGameModal} />
-            )}
-          </main>
-        </SortableContext>
-      </DndContext>
+          <SortableContext
+            items={games.map((g) => g.id)}
+            strategy={rectSortingStrategy}
+          >
+            <main className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6">
+              {games.map((game) => (
+                <GameCard
+                  key={game.id}
+                  game={game}
+                  onDeleteGame={handleDeleteGame}
+                  onOpenTaskModal={handleOpenTaskModal}
+                  onEditTask={handleOpenEditModal}
+                  onToggleTask={handleToggleTask}
+                  onDeleteTask={handleDeleteTask}
+                  isReorderMode={isReorderMode}
+                />
+              ))}
+              {!isReorderMode && (
+                <AddGameCard onOpenModal={handleOpenSelectGameModal} />
+              )}
+            </main>
+          </SortableContext>
+        </DndContext>
+      ) : (
+        // --- 새로운 마감순 보기 ---
+        <main className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {sortedTasks.map((task) => (
+            <SortedTaskCard
+              key={task.id}
+              task={task}
+              onToggle={() => handleToggleTask(task.id)}
+            />
+          ))}
+        </main>
+      )}
 
       <SelectGameModal
         isOpen={isSelectGameModalOpen}
