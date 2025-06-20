@@ -149,16 +149,20 @@ export default function TodoClientPage({
     setTaskModalOpen(true);
   };
 
-  const handleAddGame = async (
-    newGameData: Omit<Game, "id" | "tasks" | "created_at" | "order">
-  ) => {
-    const maxOrder = games.reduce(
-      (max, game) => Math.max(max, game.order || 0),
-      0
-    );
-    const { error } = await supabase
-      .from("games")
-      .insert({ ...newGameData, user_id: user.id, order: maxOrder + 1 });
+  const handleAddGame = async (newGameData: {
+    name: string;
+    character_name: string;
+    image_url: string;
+  }) => {
+    // ⭐️ order 계산 로직은 그대로 사용합니다.
+    const maxOrder =
+      games.length > 0 ? Math.max(...games.map((game) => game.order)) : -1;
+
+    const { error } = await supabase.from("games").insert({
+      ...newGameData,
+      user_id: user.id,
+      order: maxOrder + 1,
+    });
 
     if (error) {
       alert("게임 추가 실패: " + error.message);

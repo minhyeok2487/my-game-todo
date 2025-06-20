@@ -1,14 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-// Omit<Game, "id" | "tasks"> 타입이 DB 컬럼명(snake_case)을 기준으로 하므로, 별도 타입 정의가 필요 없습니다.
-import { Game } from "@/app/(main)/todo/page";
+
+// ⭐️ 1. onAddGame이 받을 데이터 타입을 직접 간단하게 정의합니다.
+interface NewGameData {
+  name: string;
+  character_name: string;
+  image_url: string;
+}
 
 interface AddGameModalProps {
   isOpen: boolean;
   onClose: () => void;
-  // 부모로부터 받는 onAddGame 함수는 DB에 넣을 데이터를 그대로 받습니다.
-  onAddGame: (gameData: Omit<Game, "id" | "tasks" | "created_at">) => void;
+  // ⭐️ 2. onAddGame prop의 타입을 수정한 타입으로 변경합니다.
+  onAddGame: (gameData: NewGameData) => void;
   initialData?: {
     name: string;
     imageUrl: string;
@@ -38,7 +43,6 @@ export const AddGameModal = ({
     e.preventDefault();
     if (!name.trim()) return;
 
-    // ⭐️ 지적해주신 대로, onAddGame에 전달하는 객체의 키를 DB 컬럼명(snake_case)으로 매핑합니다.
     onAddGame({
       name,
       character_name: characterName,
