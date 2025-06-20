@@ -4,7 +4,16 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 import type { Game, Category, Task } from "@/app/(main)/todo/page";
-import { Plus, X, Check, Calendar, Pencil, GripVertical } from "lucide-react";
+import {
+  Plus,
+  X,
+  Check,
+  Calendar,
+  Pencil,
+  GripVertical,
+  Clock,
+} from "lucide-react";
+import { formatRemainingTime } from "@/lib/utils/times";
 
 // GameCard가 받을 props 정의
 interface GameCardProps {
@@ -57,35 +66,49 @@ const TaskItem = ({
   return (
     <li className="flex items-center justify-between py-1.5 group">
       <div
-        className="flex items-center gap-2 flex-grow cursor-pointer"
+        className="flex items-center gap-2 flex-grow cursor-pointer min-w-0"
         onClick={onToggle}
       >
         <div
           className={`w-5 h-5 rounded flex items-center justify-center border-2 shrink-0 transition-colors ${
             task.completed
               ? "bg-cyan-500 border-cyan-500"
-              : "bg-gray-800 border-gray-600 group-hover:border-cyan-500"
+              : "bg-gray-800/80 dark:bg-gray-800 border-gray-600 group-hover:border-cyan-500"
           }`}
         >
           {task.completed && <Check size={16} className="text-white" />}
         </div>
-        <span
-          className={`flex-grow ${
-            task.completed ? "line-through text-gray-500" : "text-gray-200"
-          }`}
-        >
-          {task.text}
-        </span>
+
+        {/* ⭐️ 1. 텍스트와 마감일을 세로로 묶는 div */}
+        <div className="flex flex-col flex-grow min-w-0">
+          <span
+            className={`truncate ${
+              task.completed ? "line-through text-gray-500" : "text-gray-200"
+            }`}
+          >
+            {task.text}
+          </span>
+
+          {/* ⭐️ 2. '기간 숙제'일 때만 새로운 디자인으로 남은 시간 표시 */}
+          {task.category === "other" && task.due_date && !task.completed && (
+            <span className="text-xs text-cyan-400 flex items-center gap-1 mt-0.5">
+              <Clock size={12} />
+              {formatRemainingTime(task.due_date)}
+            </span>
+          )}
+        </div>
       </div>
 
-      {task.due_date && !task.completed && (
+      {/* ⭐️ 3. '기간 숙제'가 아닐 경우, 기존 D-day를 오른쪽에 표시 */}
+      {task.category !== "other" && task.due_date && !task.completed && (
         <span className="text-xs text-gray-400 flex items-center gap-1 ml-auto pl-2">
           <Calendar size={12} />
           {getDday(task.due_date)}
         </span>
       )}
 
-      <div className="flex items-center ml-2">
+      {/* 수정/삭제 버튼 (변경 없음) */}
+      <div className="flex items-center ml-2 shrink-0">
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -182,7 +205,7 @@ export const GameCard = ({
           </button>
         )}
         <div className="absolute bottom-0 left-0 p-4">
-          <h3 className="text-2xl font-bold text-white shadow-black/50 [text-shadow:_0_1px_3px_var(--tw-shadow-color)]">
+          <h3 className="text-xl font-bold text-white shadow-black/50 [text-shadow:_0_1px_3px_var(--tw-shadow-color)]">
             {game.name}
           </h3>
           <p className="text-gray-300 font-medium [text-shadow:_0_1px_2px_var(--tw-shadow-color)]">
@@ -209,7 +232,6 @@ export const GameCard = ({
                   />
                 ))}
             </ul>
-            {/* 순서 변경 모드에서는 숙제 추가 버튼 비활성화 */}
             {!isReorderMode && (
               <button
                 onClick={() => onOpenTaskModal(game.id, key, `새 ${title}`)}

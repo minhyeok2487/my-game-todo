@@ -13,16 +13,12 @@ export const formatRemainingTime = (dueDateString: string | null): string => {
     const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
     const minutes = Math.floor((diff / (1000 * 60)) % 60);
 
-    const result = [];
-    if (days > 0) result.push(`${days}일`);
-    if (hours > 0) result.push(`${hours}시간`);
-    // 분은 항상 표시하거나, 일 단위가 있을 땐 생략하는 등 정책에 따라 조절 가능
-    if (minutes > 0) result.push(`${minutes}분`);
+    const parts = [];
+    if (days > 0) parts.push(`${days}일`);
+    if (hours > 0) parts.push(`${hours}시간`);
+    // 분 단위는 너무 자주 바뀌므로, 일/시간 단위가 있을 때는 생략하는 것이 더 깔끔할 수 있습니다.
+    if (days === 0 && hours > 0) parts.push(`${minutes}분`);
+    if (days === 0 && hours === 0) return "곧 마감";
 
-    // 아무것도 없으면 (1분 미만) "곧 마감"으로 표시
-    if (result.length === 0) {
-        return "곧 마감";
-    }
-
-    return `${result.join(" ")} 남음`;
+    return `${parts.join(" ")} 남음`;
 };
