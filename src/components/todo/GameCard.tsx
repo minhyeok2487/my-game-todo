@@ -217,8 +217,21 @@ export const GameCard = ({
         {categories.map(({ key, title }) => (
           <div key={key} className="mb-4">
             <div className="flex justify-between items-center mb-2">
-              <h4 className="font-bold text-cyan-400">{title}</h4>
+              <h4 className="font-bold text-cyan-500 dark:text-cyan-400">
+                {title}
+              </h4>
+
+              {!isReorderMode && (
+                <button
+                  onClick={() => onOpenTaskModal(game.id, key, `새 ${title}`)}
+                  className="cursor-pointer text-gray-400 hover:text-cyan-500 dark:hover:text-cyan-400 p-1 rounded-full transition-colors"
+                  aria-label={`${title} 추가`}
+                >
+                  <Plus size={20} />
+                </button>
+              )}
             </div>
+
             <ul className="space-y-1">
               {game.tasks
                 .filter((task) => task.category === key)
@@ -232,15 +245,6 @@ export const GameCard = ({
                   />
                 ))}
             </ul>
-            {!isReorderMode && (
-              <button
-                onClick={() => onOpenTaskModal(game.id, key, `새 ${title}`)}
-                className="cursor-pointer mt-2 flex items-center gap-1 text-sm text-gray-400 hover:text-cyan-400 transition-colors w-full"
-              >
-                <Plus size={16} />
-                <span>숙제 추가</span>
-              </button>
-            )}
           </div>
         ))}
       </div>
