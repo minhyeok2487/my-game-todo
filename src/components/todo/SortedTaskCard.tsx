@@ -14,6 +14,8 @@ interface SortedTaskCardProps {
 }
 
 export const SortedTaskCard = ({ task, onToggle }: SortedTaskCardProps) => {
+  const remainingTime = formatRemainingTime(task.due_date);
+
   return (
     <button
       onClick={onToggle}
@@ -48,9 +50,14 @@ export const SortedTaskCard = ({ task, onToggle }: SortedTaskCardProps) => {
         </p>
 
         {task.category === "other" && (
-          <div className="text-sm text-cyan-400 flex items-center gap-1.5 mt-auto">
+          <div
+            className={`
+            text-sm flex items-center gap-1.5 mt-auto
+            ${remainingTime === "마감" ? "text-red-500" : "text-cyan-400"}
+          `}
+          >
             <Clock size={14} />
-            <span>{formatRemainingTime(task.due_date)}</span>
+            <span>{remainingTime}</span>
           </div>
         )}
       </div>

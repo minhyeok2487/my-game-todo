@@ -63,6 +63,8 @@ const TaskItem = ({
     return `D-${diffDays}`;
   };
 
+  const remainingTime = formatRemainingTime(task.due_date);
+
   return (
     <li className="flex items-center justify-between py-1.5 group">
       <div
@@ -91,9 +93,14 @@ const TaskItem = ({
 
           {/* ⭐️ 2. '기간 숙제'일 때만 새로운 디자인으로 남은 시간 표시 */}
           {task.category === "other" && task.due_date && !task.completed && (
-            <span className="text-xs text-cyan-400 flex items-center gap-1 mt-0.5">
+            <span
+              className={`
+          text-xs flex items-center gap-1 mt-0.5
+          ${remainingTime === "마감" ? "text-red-500" : "text-cyan-400"}
+        `}
+            >
               <Clock size={12} />
-              {formatRemainingTime(task.due_date)}
+              {remainingTime}
             </span>
           )}
         </div>
