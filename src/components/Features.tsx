@@ -21,14 +21,14 @@ const featureList: {
     icon: CheckSquare,
     title: "커스텀 숙제 관리",
     description:
-      "일일, 주간, 기타 숙제를 자유롭게 추가하고 체크하며 진행 상황을 추적하세요.",
+      "일일, 기간, 기타 숙제를 자유롭게 추가하고 체크하며 진행 상황을 추적하세요.",
     imageSrc: "/features/feature-tasks.png",
   },
   {
     icon: CalendarDays,
     title: "자동 초기화 및 D-Day",
     description:
-      "일일 숙제는 매일 자동으로 초기화되고, 주간 숙제는 마감일을 알려줍니다.",
+      "일일 숙제는 매일 자동으로 초기화되고, 기간 숙제는 마감일을 알려줍니다.",
     imageSrc: "/features/feature-auto.png",
   },
 ];
