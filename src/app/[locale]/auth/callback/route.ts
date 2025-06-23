@@ -2,16 +2,14 @@ import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-// 👇 함수 시그니처를 변경하여 params를 받습니다.
 export async function GET(
     request: NextRequest,
-    { params }: { params: { locale: string } }
+    { params }: { params: Promise<{ locale: string }>; }
 ) {
     const { searchParams, origin } = new URL(request.url);
     const code = searchParams.get("code");
-    // next 기본값에서 슬래시를 빼서 origin과 이중 슬래시가 되지 않도록 합니다.
     const next = searchParams.get("next") ?? "todo";
-    const { locale } = params; // URL 경로에서 locale을 추출합니다.
+    const { locale } = await params;
 
     if (code) {
         const supabase = createSupabaseServerClient(false);

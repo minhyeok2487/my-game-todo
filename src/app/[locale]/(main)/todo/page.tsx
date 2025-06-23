@@ -23,10 +23,12 @@ export interface Game {
 }
 
 export default async function TodoPage({
-  params: { locale },
+  params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
+
   const supabase = createSupabaseServerClient();
 
   const {

@@ -1,4 +1,84 @@
 {
+  "PrivacyPolicyPage": {
+    "pageTitle": "My Game TODO Privacy Policy",
+    "effectiveDate": "This policy is effective as of {date}.",
+    "disclaimer": "This document has been machine-translated for your convenience. For complete accuracy, please refer to the original Korean version.",
+    "articles": [
+      {
+        "title": "Article 1 (Personal Information We Collect and How We Collect It)",
+        "content": [
+          "The Company collects the following personal information to provide its services:",
+          "• Required Items: Email address, Nickname",
+          "• Collection Method:",
+          "  - Directly entered by the user upon email sign-up",
+          "  - Email and nickname information provided by Google upon Google sign-in"
+        ]
+      },
+      {
+        "title": "Article 2 (Purpose of Collection and Use of Personal Information)",
+        "content": [
+          "The Company uses the collected personal information for the following purposes:",
+          "• Member identification and management",
+          "• Provision, maintenance, and improvement of services",
+          "• Delivery of service-related notices and handling of complaints"
+        ]
+      },
+      {
+        "title": "Article 3 (Period of Retention and Use of Personal Information)",
+        "content": [
+          "The user's personal information is destroyed without delay upon withdrawal from membership.",
+          "However, if retention is required by relevant laws, the information will be stored safely for the specified period.",
+          "• Records on contracts or withdrawal of offers: 5 years",
+          "• Records on consumer complaints or dispute resolution: 3 years"
+        ]
+      },
+      {
+        "title": "Article 4 (Provision of Personal Information to Third Parties)",
+        "content": [
+          "In principle, the Company does not provide users' personal information to external parties. However, the following cases are exceptions:",
+          "• When the user has given prior consent",
+          "• When required by law or unavoidable for submission upon request from investigative agencies"
+        ]
+      },
+      {
+        "title": "Article 5 (Entrustment of Personal Information Processing)",
+        "content": [
+          "The Company does not entrust the processing of personal information to external companies.",
+          "Should entrustment occur in the future, we will specify the trustee, the scope of work, and the entrustment period in this policy and obtain prior consent."
+        ]
+      },
+      {
+        "title": "Article 6 (User's Rights and How to Exercise Them)",
+        "content": [
+          "Users may view or modify their personal information at any time and may withdraw their consent to the collection and use of personal information by withdrawing their membership.",
+          "Requests to view, correct, or delete personal information can be made through the settings menu within the service or via the contact information below."
+        ]
+      },
+      {
+        "title": "Article 7 (Procedure and Method of Destroying Personal Information)",
+        "content": [
+          "• Destruction Procedure: When a user requests withdrawal or the purpose of collecting and using personal information has been achieved, the information is destroyed without delay.",
+          "• Destruction Method:",
+          "  - Electronic files: Permanently deleted using a technical method that makes recovery impossible.",
+          "  - Paper documents: Shredded or incinerated."
+        ]
+      },
+      {
+        "title": "Article 8 (Chief Privacy Officer)",
+        "content": [
+          "The Company designates a Chief Privacy Officer as follows to protect users' personal information and handle related complaints.",
+          "• Name: Lee Min-hyuk",
+          "• Contact: repeat2487@gmail.com"
+        ]
+      },
+      {
+        "title": "Article 9 (Changes to the Privacy Policy)",
+        "content": [
+          "This Privacy Policy may be amended according to laws or company policies, and any changes will be announced in advance through service notices."
+        ]
+      }
+    ]
+  },
   "LandingPage": {
     "Hero": {
       "title_line1": "All your game tasks,",

@@ -1,107 +1,56 @@
-export default function PrivacyPolicyPage() {
+import { getTranslations } from "next-intl/server";
+import { getLocale } from "next-intl/server";
+
+function Disclaimer({ text }: { text: string }) {
   return (
-    <div className="max-w-3xl mx-auto px-6 py-12">
-      <h1 className="text-3xl font-bold mb-4">My Game TODO 개인정보처리방침</h1>
-      <p className="text-sm text-gray-500 mb-10">
-        본 방침은 2025년 6월 23일부터 적용됩니다.
-      </p>
-
-      <section className="space-y-6">
-        <Article
-          title="제1조 (수집하는 개인정보 항목 및 방법)"
-          content={[
-            "회사는 서비스 제공을 위해 아래와 같은 개인정보를 수집합니다.",
-            "• 필수항목: 이메일 주소, 닉네임",
-            "• 수집방법:",
-            "  - 이메일 가입 시 이용자가 직접 입력",
-            "  - 구글 로그인 시 구글로부터 제공받는 이메일, 닉네임 정보",
-          ]}
-        />
-
-        <Article
-          title="제2조 (개인정보의 수집 및 이용 목적)"
-          content={[
-            "회사는 수집한 개인정보를 다음의 목적을 위해 활용합니다.",
-            "• 회원 식별 및 관리",
-            "• 서비스 제공 및 유지∙개선",
-            "• 서비스 관련 고지사항 전달 및 민원처리",
-          ]}
-        />
-
-        <Article
-          title="제3조 (개인정보의 보유 및 이용기간)"
-          content={[
-            "이용자의 개인정보는 회원 탈퇴 시 지체 없이 파기합니다.",
-            "단, 관련 법령에 따라 보존이 필요한 경우에는 해당 기간 동안 안전하게 보관됩니다.",
-            "• 계약 또는 청약철회 등에 관한 기록: 5년",
-            "• 소비자의 불만 또는 분쟁처리에 관한 기록: 3년",
-          ]}
-        />
-
-        <Article
-          title="제4조 (개인정보의 제3자 제공)"
-          content={[
-            "회사는 이용자의 개인정보를 원칙적으로 외부에 제공하지 않습니다. 다만, 아래의 경우에는 예외로 합니다.",
-            "• 이용자가 사전에 동의한 경우",
-            "• 법령의 규정에 의거하거나, 수사기관의 요청에 따라 제출이 불가피한 경우",
-          ]}
-        />
-
-        <Article
-          title="제5조 (개인정보 처리의 위탁)"
-          content={[
-            "회사는 개인정보 처리를 외부 업체에 위탁하지 않습니다.",
-            "향후 위탁이 발생할 경우, 위탁 대상자 및 업무 내용, 위탁기간 등을 본 방침에 명시하고 사전 동의를 받겠습니다.",
-          ]}
-        />
-
-        <Article
-          title="제6조 (이용자의 권리 및 행사 방법)"
-          content={[
-            "이용자는 언제든지 자신의 개인정보를 조회하거나 수정할 수 있으며, 회원 탈퇴를 통해 수집∙이용에 대한 동의를 철회할 수 있습니다.",
-            "개인정보 열람, 정정, 삭제 요청은 서비스 내 설정 메뉴 또는 아래 문의처를 통해 가능합니다.",
-          ]}
-        />
-
-        <Article
-          title="제7조 (개인정보의 파기 절차 및 방법)"
-          content={[
-            "• 파기 절차: 이용자가 회원 탈퇴를 요청하거나 개인정보의 수집 및 이용 목적이 달성된 경우, 해당 정보를 지체 없이 파기합니다.",
-            "• 파기 방법:",
-            "  - 전자적 파일 형태: 복구 불가능한 기술적 방법으로 영구 삭제",
-            "  - 종이 문서: 분쇄하거나 소각하여 파기",
-          ]}
-        />
-
-        <Article
-          title="제8조 (개인정보 보호책임자)"
-          content={[
-            "회사는 이용자의 개인정보를 보호하고 관련 민원을 처리하기 위하여 아래와 같이 개인정보 보호책임자를 지정합니다.",
-            "• 성명: 이민혁",
-            "• 연락처: repeat2487@gmail.com",
-          ]}
-        />
-
-        <Article
-          title="제9조 (개인정보처리방침 변경에 관한 사항)"
-          content={[
-            "본 개인정보처리방침은 법령 또는 회사 정책에 따라 변경될 수 있으며, 변경 시 서비스 내 공지사항을 통해 사전 고지합니다.",
-          ]}
-        />
-      </section>
+    <div className="mb-8 p-4 border-l-4 border-yellow-500 bg-yellow-500/10 text-yellow-300 rounded-r-lg">
+      <p className="font-semibold">{text}</p>
     </div>
   );
 }
 
 function Article({ title, content }: { title: string; content: string[] }) {
   return (
-    <div>
+    <div className="prose prose-invert max-w-none">
       <h2 className="text-lg font-semibold mb-2">{title}</h2>
       {content.map((line, idx) => (
-        <p key={idx} className="mb-1 leading-relaxed">
+        <p key={idx} className="mb-1 leading-relaxed whitespace-pre-line">
           {line}
         </p>
       ))}
+    </div>
+  );
+}
+
+export default async function PrivacyPolicyPage() {
+  const t = await getTranslations("PrivacyPolicyPage");
+  const locale = await getLocale(); // 서버 컴포넌트에서 현재 locale 가져오기
+
+  const articles = Array.from({ length: 9 }, (_, index) => ({
+    title: t(`articles.${index}.title`),
+    content: t.raw(`articles.${index}.content`) as string[],
+  }));
+
+  return (
+    <div className="max-w-3xl mx-auto px-6 py-12">
+      <h1 className="text-3xl font-bold mb-4">{t("pageTitle")}</h1>
+      <p className="text-sm text-gray-500 mb-10">
+        {t("effectiveDate", {
+          date: new Date(2025, 5, 23),
+        })}
+      </p>
+
+      {locale !== "ko" && <Disclaimer text={t("disclaimer")} />}
+
+      <section className="space-y-6">
+        {articles.map((article, index) => (
+          <Article
+            key={index}
+            title={article.title}
+            content={article.content}
+          />
+        ))}
+      </section>
     </div>
   );
 }
