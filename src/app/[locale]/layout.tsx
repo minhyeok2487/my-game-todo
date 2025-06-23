@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     images: ["/app-preview.jpg"],
   },
   verification: {
-    google: "BgdgLxDBsy4HGU_9iKVa4zmjGAPuBodvfY9t3EHOBI",
+    google: "1BgdgLxDBsy4HGU_9iKVa4zmjGAPuBodvfY9t3EHOBI",
   },
 };
 
