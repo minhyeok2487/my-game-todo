@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/client";
+import { useTranslations } from "next-intl";
 import { UserCircle2, LoaderCircle, Save } from "lucide-react";
 
 export default function ProfileSetupPage() {
+  const t = useTranslations("ProfileSetupPage");
   const [nickname, setNickname] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -25,10 +27,10 @@ export default function ProfileSetupPage() {
       });
 
       if (error) {
-        alert("프로필 설정 중 오류가 발생했습니다: " + error.message);
+        alert(t("alerts.setupError", { error: error.message }));
         setIsLoading(false);
       } else {
-        alert("프로필 설정이 완료되었습니다!");
+        alert(t("alerts.setupSuccess"));
         router.push("/todo");
         router.refresh();
       }
@@ -40,10 +42,8 @@ export default function ProfileSetupPage() {
       <div className="w-full max-w-md">
         <section className="w-full bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
           <header className="text-center mb-8">
-            <h1 className="text-3xl font-bold">프로필 설정</h1>
-            <p className="mt-2 text-sm text-gray-600">
-              사용하실 닉네임을 설정해주세요.
-            </p>
+            <h1 className="text-3xl font-bold">{t("title")}</h1>
+            <p className="mt-2 text-sm text-gray-600">{t("subtitle")}</p>
           </header>
           <form onSubmit={handleProfileSetup} className="space-y-5">
             <div className="relative">
@@ -54,13 +54,13 @@ export default function ProfileSetupPage() {
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
                 required
-                placeholder="닉네임"
+                placeholder={t("nicknamePlaceholder")}
                 className="w-full pl-10 pr-4 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || !nickname}
               className="cursor-pointer w-full flex items-center justify-center py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
             >
               {isLoading ? (
@@ -68,7 +68,7 @@ export default function ProfileSetupPage() {
               ) : (
                 <>
                   <Save className="mr-2 h-5 w-5" />
-                  저장하고 시작하기
+                  {t("submitButton")}
                 </>
               )}
             </button>

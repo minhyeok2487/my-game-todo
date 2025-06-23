@@ -38,5 +38,15 @@
       "signUpError": "注册时发生错误：{error}",
       "signUpSuccess": "确认邮件已发送。请检查您的收件箱。"
     }
+  },
+  "ProfileSetupPage": {
+    "title": "个人资料设置",
+    "subtitle": "请设置您要使用的昵称。",
+    "nicknamePlaceholder": "昵称",
+    "submitButton": "保存并开始",
+    "alerts": {
+      "setupError": "设置个人资料时出错：{error}",
+      "setupSuccess": "个人资料设置完成！"
+    }
   }
 }

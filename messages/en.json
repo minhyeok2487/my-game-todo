@@ -38,5 +38,15 @@
       "signUpError": "An error occurred during sign-up: {error}",
       "signUpSuccess": "A confirmation email has been sent. Please check your inbox."
     }
+  },
+  "ProfileSetupPage": {
+    "title": "Profile Setup",
+    "subtitle": "Please set up the nickname you want to use.",
+    "nicknamePlaceholder": "Nickname",
+    "submitButton": "Save and Get Started",
+    "alerts": {
+      "setupError": "An error occurred while setting up the profile: {error}",
+      "setupSuccess": "Profile setup complete!"
+    }
   }
 }

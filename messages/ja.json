@@ -38,5 +38,15 @@
       "signUpError": "会員登録中にエラーが発生しました: {error}",
       "signUpSuccess": "確認メールが送信されました。メールをご確認ください。"
     }
+  },
+  "ProfileSetupPage": {
+    "title": "プロフィール設定",
+    "subtitle": "使用するニックネームを設定してください。",
+    "nicknamePlaceholder": "ニックネーム",
+    "submitButton": "保存して開始",
+    "alerts": {
+      "setupError": "プロフィールの設定中にエラーが発生しました: {error}",
+      "setupSuccess": "プロフィール設定が完了しました！"
+    }
   }
 }
