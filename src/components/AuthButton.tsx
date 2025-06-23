@@ -3,7 +3,6 @@ import { signOut } from "@/app/auth/actions";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export default async function AuthButton() {
-  // 서버 컴포넌트는 데이터를 읽기만 하므로 readonly 모드로 클라이언트 생성
   const supabase = createSupabaseServerClient();
 
   const {

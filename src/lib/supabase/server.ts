@@ -11,11 +11,10 @@ export const createSupabaseServerClient = (readonly: boolean = true) => {
         {
             cookies: {
                 async get(name: string) {
-                    // cookies()가 Promise를 반환하므로 await 사용
                     return (await cookieStore).get(name)?.value;
                 },
                 async set(name: string, value: string, options: CookieOptions) {
-                    if (readonly) return; // 읽기 전용 모드일 경우 쿠키 설정 방지
+                    if (readonly) return;
                     await (await cookieStore).set({ name, value, ...options });
                 },
                 async remove(name: string, options: CookieOptions) {

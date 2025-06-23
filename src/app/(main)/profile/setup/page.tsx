@@ -61,7 +61,7 @@ export default function ProfileSetupPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
+              className="cursor-pointer w-full flex items-center justify-center py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
             >
               {isLoading ? (
                 <LoaderCircle className="animate-spin h-5 w-5" />

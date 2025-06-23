@@ -65,17 +65,24 @@ export default function LoginPage() {
     }
   };
 
-  // const handleSignInWithProvider = async (
-  //   provider: "google" | "github" | "kakao"
-  // ) => {
-  //   setIsLoading(true);
-  //   await supabase.auth.signInWithOAuth({
-  //     provider,
-  //     options: {
-  //       redirectTo: `${location.origin}/auth/callback`,
-  //     },
-  //   });
-  // };
+  const handleSignInWithProvider = async (
+    provider: "google" | "github" | "kakao"
+  ) => {
+    setIsLoading(true);
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      alert(`${provider} 로그인 중 오류가 발생했습니다. 다시 시도해주세요.`);
+      console.error(`OAuth Pprovider [${provider}] 에러:`, error);
+      setIsLoading(false);
+    }
+  };
 
   return (
     <main className="flex items-center justify-center px-4 py-20">
@@ -198,8 +205,7 @@ export default function LoginPage() {
 
         <div className="space-y-3">
           <button
-            // onClick={() => handleSignInWithProvider("google")}
-            onClick={() => alert("개발 예정")}
+            onClick={() => handleSignInWithProvider("google")}
             className="cursor-pointer w-full flex items-center justify-center py-2.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
           >
             <Image
