@@ -1,13 +1,20 @@
 {
   "LoginPage": {
-    "title": "欢迎！",
-    "noAccount": "还没有账户？",
-    "createAccount": "立即创建",
+    "title": "登录",
+    "noAccount": "还没有账户吗？",
+    "createAccount": "创建一个",
     "emailPlaceholder": "电子邮件地址",
     "passwordPlaceholder": "密码",
     "rememberEmail": "记住电子邮件",
-    "signIn": "登录",
-    "or": "或者",
-    "signInWithGoogle": "使用Google账户登录"
+    "loginButton": "登录",
+    "orSeparator": "或",
+    "googleLogin": "使用 Google 帐户登录",
+    "alerts": {
+      "invalidCredentials": "无效的电子邮件或密码。",
+      "emailNotConfirmed": "需要电子邮件确认。您想让我们重新发送确认电子邮件吗？",
+      "resendConfirmation": "已发送新的确认电子邮件。请检查您的收件箱。",
+      "unknownError": "登录时发生未知错误。",
+      "oauthError": "使用 {provider} 登录时出错。请再试一次。"
+    }
   }
 }

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { signOut } from "@/app/auth/actions";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 

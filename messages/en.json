@@ -1,13 +1,20 @@
 {
   "LoginPage": {
-    "title": "Welcome!",
+    "title": "Login",
     "noAccount": "Don't have an account?",
     "createAccount": "Create one",
     "emailPlaceholder": "Email address",
     "passwordPlaceholder": "Password",
     "rememberEmail": "Remember email",
-    "signIn": "Sign In",
-    "or": "or",
-    "signInWithGoogle": "Sign in with Google"
+    "loginButton": "Login",
+    "orSeparator": "Or continue with",
+    "googleLogin": "Sign in with Google",
+    "alerts": {
+      "invalidCredentials": "Invalid email or password.",
+      "emailNotConfirmed": "Email confirmation is required. Would you like us to resend the confirmation email?",
+      "resendConfirmation": "A new confirmation email has been sent. Please check your inbox.",
+      "unknownError": "An unknown error occurred while logging in.",
+      "oauthError": "An error occurred while signing in with {provider}. Please try again."
+    }
   }
 }

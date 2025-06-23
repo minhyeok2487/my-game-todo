@@ -37,17 +37,15 @@ export default function LoginPage() {
 
     if (error) {
       if (error.message === "Invalid login credentials") {
-        alert("이메일 또는 비밀번호가 올바르지 않습니다.");
+        alert(t("alerts.invalidCredentials"));
       } else if (error.message === "Email not confirmed") {
-        const shouldResend = window.confirm(
-          "이메일 인증이 필요합니다. 인증 메일을 다시 보내드릴까요?"
-        );
+        const shouldResend = window.confirm(t("alerts.emailNotConfirmed"));
         if (shouldResend) {
           await supabase.auth.resend({ type: "signup", email: email });
-          alert("인증 메일을 다시 보냈습니다. 받은 편지함을 확인해주세요.");
+          alert(t("alerts.resendConfirmation"));
         }
       } else {
-        alert("로그인 중 알 수 없는 오류가 발생했습니다.");
+        alert(t("alerts.unknownError"));
         console.error("로그인 에러:", error);
       }
       setIsLoading(false);
@@ -80,7 +78,7 @@ export default function LoginPage() {
     });
 
     if (error) {
-      alert(`${provider} 로그인 중 오류가 발생했습니다. 다시 시도해주세요.`);
+      alert(t("alerts.oauthError", { provider }));
       console.error(`OAuth Pprovider [${provider}] 에러:`, error);
       setIsLoading(false);
     }
@@ -94,12 +92,12 @@ export default function LoginPage() {
             {t("title")}
           </h1>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            계정이 없으신가요?{" "}
+            {t("noAccount")}{" "}
             <Link
               href="/signup"
               className="text-blue-600 hover:underline font-medium dark:text-blue-400"
             >
-              새로 만들기
+              {t("createAccount")}
             </Link>
           </p>
         </header>
@@ -113,7 +111,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder="이메일 주소"
+              placeholder={t("emailPlaceholder")}
               className="w-full pl-10 pr-4 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
             />
           </div>
@@ -126,7 +124,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              placeholder="비밀번호"
+              placeholder={t("passwordPlaceholder")}
               className="w-full pl-10 pr-10 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
             />
             <button
@@ -138,13 +136,11 @@ export default function LoginPage() {
             </button>
           </div>
 
-          {/* ⭐️ 이 부분이 수정되었습니다. */}
           <div className="flex items-center justify-between">
             <label
               htmlFor="remember-email"
               className="flex items-center cursor-pointer"
             >
-              {/* 실제 체크박스는 숨김 처리 */}
               <input
                 id="remember-email"
                 type="checkbox"
@@ -152,7 +148,6 @@ export default function LoginPage() {
                 checked={rememberEmail}
                 onChange={(e) => setRememberEmail(e.target.checked)}
               />
-              {/* 커스텀 토글 스위치 UI */}
               <div
                 className={`relative w-11 h-6 rounded-full transition-colors ${
                   rememberEmail ? "bg-blue-600" : "bg-gray-300 dark:bg-gray-600"
@@ -165,30 +160,22 @@ export default function LoginPage() {
                 ></span>
               </div>
               <span className="ml-3 text-sm text-gray-900 dark:text-gray-300">
-                이메일 기억하기
+                {t("rememberEmail")}
               </span>
             </label>
-
-            {/* ⭐️ "비밀번호를 잊으셨나요?" 링크 주석 처리 */}
-            {/* <div className="text-sm">
-              <a href="#" className="font-semibold text-blue-600 hover:text-blue-500">
-                비밀번호를 잊으셨나요?
-              </a>
-            </div> 
-            */}
           </div>
 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full flex items-center justify-center py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="cursor-pointer w-full flex items-center justify-center py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <LoaderCircle className="animate-spin h-5 w-5" />
             ) : (
               <>
                 <LogIn className="mr-2 h-5 w-5" />
-                로그인
+                {t("loginButton")}
               </>
             )}
           </button>
@@ -200,7 +187,7 @@ export default function LoginPage() {
           </div>
           <div className="relative flex justify-center text-sm">
             <span className="bg-white dark:bg-gray-800 px-2 text-gray-500 dark:text-gray-400">
-              또는
+              {t("orSeparator")}
             </span>
           </div>
         </div>
@@ -217,7 +204,7 @@ export default function LoginPage() {
               height={20}
               className="mr-2"
             />
-            Google 계정으로 로그인
+            {t("googleLogin")}
           </button>
         </div>
       </div>
