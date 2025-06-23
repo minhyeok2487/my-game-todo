@@ -1,5 +1,5 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+import { redirect } from "@/i18n/routing";
 import TodoClientPage from "./TodoClientPage";
 
 // 타입 정의
@@ -22,7 +22,11 @@ export interface Game {
   order: number;
 }
 
-export default async function TodoPage() {
+export default async function TodoPage({
+  params: { locale },
+}: {
+  params: { locale: string };
+}) {
   const supabase = createSupabaseServerClient();
 
   const {
@@ -30,11 +34,9 @@ export default async function TodoPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
-  }
-
-  if (!user.user_metadata.display_name) {
-    redirect("/profile/setup");
+    redirect({ href: "/login", locale: locale });
+  } else if (!user.user_metadata.display_name) {
+    redirect({ href: "/profile/setup", locale: locale });
   }
 
   const { data: games, error } = await supabase
@@ -42,12 +44,12 @@ export default async function TodoPage() {
     .select(
       `id, name, character_name, image_url, order, tasks ( id, text, completed, due_date, category )`
     )
-    .eq("user_id", user.id)
+    .eq("user_id", user!.id)
     .order("order", { ascending: true });
 
   if (error) {
-    console.error("데이터 로딩 실패:", error.message);
+    console.error(error.message);
   }
 
-  return <TodoClientPage serverGames={games || []} user={user} />;
+  return <TodoClientPage serverGames={games || []} user={user!} />;
 }

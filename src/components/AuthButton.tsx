@@ -1,18 +1,23 @@
 import { Link } from "@/i18n/routing";
-import { signOut } from "@/app/auth/actions";
+import { signOut } from "@/app/[locale]/auth/actions";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { headers } from "next/headers";
 
 export default async function AuthButton() {
   const supabase = createSupabaseServerClient();
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  const headersList = await headers();
+  const pathname = headersList.get("x-next-pathname") || "/";
+  const locale = pathname.split("/")[1] || "ko"; // 기본값으로 'ko' 설정
 
   return user ? (
     <div className="flex items-center gap-4">
       <span className="text-sm hidden sm:block">{user.email}</span>
       <form action={signOut}>
+        <input type="hidden" name="locale" value={locale} />
         <button className="cursor-pointer px-3 py-1.5 text-sm font-semibold bg-gray-700 dark:bg-gray-50 rounded-md hover:bg-gray-600 text-gray-100 dark:text-gray-900">
           로그아웃
         </button>

@@ -5,10 +5,11 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Mail, Lock, LogIn, LoaderCircle, Eye, EyeOff } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 export default function LoginPage() {
   const t = useTranslations("LoginPage");
+  const locale = useLocale(); // 👈 현재 locale 가져오기
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -72,7 +73,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${location.origin}/auth/callback`,
+        redirectTo: `${location.origin}/${locale}/auth/callback`,
       },
     });
 
