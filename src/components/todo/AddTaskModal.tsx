@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { Category, Task } from "@/app/(main)/todo/page";
+import type { Category, Task } from "@/app/[locale]/(main)/todo/page";
 
 interface AddTaskModalProps {
   isOpen: boolean;

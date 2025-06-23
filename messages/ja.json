@@ -1,0 +1,13 @@
+{
+  "LoginPage": {
+    "title": "ようこそ！",
+    "noAccount": "アカウントをお持ちではありませんか？",
+    "createAccount": "新規作成",
+    "emailPlaceholder": "メールアドレス",
+    "passwordPlaceholder": "パスワード",
+    "rememberEmail": "メールアドレスを記憶",
+    "signIn": "ログイン",
+    "or": "または",
+    "signInWithGoogle": "Googleアカウントでログイン"
+  }
+}

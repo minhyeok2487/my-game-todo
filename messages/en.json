@@ -1,0 +1,13 @@
+{
+  "LoginPage": {
+    "title": "Welcome!",
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create one",
+    "emailPlaceholder": "Email address",
+    "passwordPlaceholder": "Password",
+    "rememberEmail": "Remember email",
+    "signIn": "Sign In",
+    "or": "or",
+    "signInWithGoogle": "Sign in with Google"
+  }
+}

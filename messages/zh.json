@@ -1,0 +1,13 @@
+{
+  "LoginPage": {
+    "title": "欢迎！",
+    "noAccount": "还没有账户？",
+    "createAccount": "立即创建",
+    "emailPlaceholder": "电子邮件地址",
+    "passwordPlaceholder": "密码",
+    "rememberEmail": "记住电子邮件",
+    "signIn": "登录",
+    "or": "或者",
+    "signInWithGoogle": "使用Google账户登录"
+  }
+}

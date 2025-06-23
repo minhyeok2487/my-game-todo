@@ -1,0 +1,13 @@
+{
+  "LoginPage": {
+    "title": "환영합니다!",
+    "noAccount": "계정이 없으신가요?",
+    "createAccount": "새로 만들기",
+    "emailPlaceholder": "이메일 주소",
+    "passwordPlaceholder": "비밀번호",
+    "rememberEmail": "이메일 기억하기",
+    "signIn": "로그인",
+    "or": "또는",
+    "signInWithGoogle": "Google 계정으로 로그인"
+  }
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import type { Task } from "@/app/(main)/todo/page";
+import type { Task } from "@/app/[locale]/(main)/todo/page";
 import { formatRemainingTime } from "@/lib/utils/times";
 import { Check, Clock } from "lucide-react";
 

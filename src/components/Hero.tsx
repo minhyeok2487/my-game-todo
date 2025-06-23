@@ -1,5 +1,5 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { HeroSection } from "./\blanding/HeroSection";
+import { HeroSection } from "./landing/HeroSection";
 
 export default async function LandingPage() {
   const supabase = createSupabaseServerClient();
