@@ -16,5 +16,27 @@
       "unknownError": "An unknown error occurred while logging in.",
       "oauthError": "An error occurred while signing in with {provider}. Please try again."
     }
+  },
+  "SignUpPage": {
+    "title": "Create a New Account",
+    "subtitle": "Manage your gaming life with My Game TODO.",
+    "emailPlaceholder": "Email address",
+    "passwordPlaceholder": "Password",
+    "confirmPasswordPlaceholder": "Confirm Password",
+    "passwordChecks": {
+      "length": "At least 8 characters",
+      "lowercase": "Contains a lowercase letter",
+      "number": "Contains a number",
+      "specialChar": "Contains a special character (!@#$%^&*)"
+    },
+    "submitButton": "Sign Up with Email",
+    "loginPrompt": "Already have an account?",
+    "loginLink": "Login",
+    "alerts": {
+      "passwordPolicy": "Password does not meet all requirements.",
+      "passwordMismatch": "Passwords do not match.",
+      "signUpError": "An error occurred during sign-up: {error}",
+      "signUpSuccess": "A confirmation email has been sent. Please check your inbox."
+    }
   }
 }

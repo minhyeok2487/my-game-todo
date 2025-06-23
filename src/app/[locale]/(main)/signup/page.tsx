@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useRouter } from "@/i18n/routing";
+import { Link } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/client";
+import { useTranslations } from "next-intl";
 import {
   Mail,
   Lock,
@@ -23,6 +24,7 @@ type PasswordChecks = {
 };
 
 export default function SignUpPage() {
+  const t = useTranslations("SignUpPage");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -54,11 +56,11 @@ export default function SignUpPage() {
     e.preventDefault();
     const allChecksPassed = Object.values(passwordChecks).every(Boolean);
     if (!allChecksPassed) {
-      alert("비밀번호가 모든 조건을 만족하지 않습니다.");
+      alert(t("alerts.passwordPolicy"));
       return;
     }
     if (password !== confirmPassword) {
-      alert("비밀번호가 일치하지 않습니다.");
+      alert(t("alerts.passwordMismatch"));
       return;
     }
     setIsLoading(true);
@@ -69,10 +71,10 @@ export default function SignUpPage() {
     });
 
     if (error) {
-      alert("회원가입 중 오류가 발생했습니다: " + error.message);
+      alert(t("alerts.signUpError", { error: error.message }));
       setIsLoading(false);
     } else {
-      alert("회원가입 확인 메일이 발송되었습니다. 이메일을 확인해주세요.");
+      alert(t("alerts.signUpSuccess"));
       router.push("/login");
     }
   };
@@ -82,10 +84,8 @@ export default function SignUpPage() {
       <div className="w-full max-w-md">
         <section className="w-full bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
           <header className="text-center mb-8">
-            <h1 className="text-3xl font-bold">새로운 계정 만들기</h1>
-            <p className="mt-2 text-sm text-gray-400">
-              My Game TODO와 함께 게임 라이프를 관리하세요.
-            </p>
+            <h1 className="text-3xl font-bold">{t("title")}</h1>
+            <p className="mt-2 text-sm text-gray-400">{t("subtitle")}</p>
           </header>
 
           <form onSubmit={handleSignUp} className="space-y-5">
@@ -97,7 +97,7 @@ export default function SignUpPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="이메일 주소"
+                placeholder={t("emailPlaceholder")}
                 className="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -112,7 +112,7 @@ export default function SignUpPage() {
                 onFocus={() => setIsPasswordFocused(true)}
                 onBlur={() => setIsPasswordFocused(false)}
                 required
-                placeholder="비밀번호"
+                placeholder={t("passwordPlaceholder")}
                 className="w-full pl-10 pr-10 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
@@ -136,7 +136,7 @@ export default function SignUpPage() {
                   ) : (
                     <XCircle className="w-4 h-4 mr-2" />
                   )}
-                  8자 이상
+                  {t("passwordChecks.length")}
                 </li>
                 <li
                   className={`flex items-center ${
@@ -148,7 +148,7 @@ export default function SignUpPage() {
                   ) : (
                     <XCircle className="w-4 h-4 mr-2" />
                   )}
-                  영문 소문자 포함
+                  {t("passwordChecks.lowercase")}
                 </li>
                 <li
                   className={`flex items-center ${
@@ -160,7 +160,7 @@ export default function SignUpPage() {
                   ) : (
                     <XCircle className="w-4 h-4 mr-2" />
                   )}
-                  숫자 포함
+                  {t("passwordChecks.number")}
                 </li>
                 <li
                   className={`flex items-center ${
@@ -174,7 +174,7 @@ export default function SignUpPage() {
                   ) : (
                     <XCircle className="w-4 h-4 mr-2" />
                   )}
-                  특수문자 (!@#$%^&*) 포함
+                  {t("passwordChecks.specialChar")}
                 </li>
               </ul>
             )}
@@ -187,7 +187,7 @@ export default function SignUpPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                placeholder="비밀번호 확인"
+                placeholder={t("confirmPasswordPlaceholder")}
                 className="w-full pl-10 pr-10 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
@@ -209,19 +209,19 @@ export default function SignUpPage() {
               ) : (
                 <>
                   <UserPlus className="mr-2 h-5 w-5" />
-                  이메일로 가입하기
+                  {t("submitButton")}
                 </>
               )}
             </button>
           </form>
 
           <p className="text-center text-sm text-gray-500 mt-8">
-            이미 계정이 있으신가요?{" "}
+            {t("loginPrompt")}{" "}
             <Link
               href="/login"
               className="text-blue-500 font-medium hover:underline"
             >
-              로그인
+              {t("loginLink")}
             </Link>
           </p>
         </section>

@@ -16,5 +16,27 @@
       "unknownError": "ログイン中に不明なエラーが発生しました。",
       "oauthError": "{provider}でのログイン中にエラーが発生しました。もう一度お試しください。"
     }
+  },
+  "SignUpPage": {
+    "title": "新しいアカウントを作成",
+    "subtitle": "My Game TODOでゲームライフを管理しましょう。",
+    "emailPlaceholder": "メールアドレス",
+    "passwordPlaceholder": "パスワード",
+    "confirmPasswordPlaceholder": "パスワードを再入力",
+    "passwordChecks": {
+      "length": "8文字以上",
+      "lowercase": "英小文字を含む",
+      "number": "数字を含む",
+      "specialChar": "特殊文字 (!@#$%^&*) を含む"
+    },
+    "submitButton": "メールで登録",
+    "loginPrompt": "すでにアカウントをお持ちですか？",
+    "loginLink": "ログイン",
+    "alerts": {
+      "passwordPolicy": "パスワードがすべての条件を満たしていません。",
+      "passwordMismatch": "パスワードが一致しません。",
+      "signUpError": "会員登録中にエラーが発生しました: {error}",
+      "signUpSuccess": "確認メールが送信されました。メールをご確認ください。"
+    }
   }
 }

@@ -16,5 +16,27 @@
       "unknownError": "登录时发生未知错误。",
       "oauthError": "使用 {provider} 登录时出错。请再试一次。"
     }
+  },
+  "SignUpPage": {
+    "title": "创建新账户",
+    "subtitle": "使用 My Game TODO 管理您的游戏生活。",
+    "emailPlaceholder": "电子邮件地址",
+    "passwordPlaceholder": "密码",
+    "confirmPasswordPlaceholder": "确认密码",
+    "passwordChecks": {
+      "length": "至少8个字符",
+      "lowercase": "包含一个小写字母",
+      "number": "包含一个数字",
+      "specialChar": "包含一个特殊字符 (!@#$%^&*)"
+    },
+    "submitButton": "使用电子邮件注册",
+    "loginPrompt": "已经有账户了？",
+    "loginLink": "登录",
+    "alerts": {
+      "passwordPolicy": "密码不符合所有要求。",
+      "passwordMismatch": "密码不匹配。",
+      "signUpError": "注册时发生错误：{error}",
+      "signUpSuccess": "确认邮件已发送。请检查您的收件箱。"
+    }
   }
 }
