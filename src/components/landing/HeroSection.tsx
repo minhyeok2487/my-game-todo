@@ -2,13 +2,27 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/routing"; // 👈 next-intl의 Link로 변경
+
+// 부모로부터 받을 데이터 타입을 정의합니다.
+interface HeroTranslations {
+  title_line1: string;
+  title_line2_span: string;
+  title_line2_rest: string;
+  subtitle_line1: string;
+  subtitle_line2: string;
+  subtitle_line3_strong: string;
+  subtitle_line3_rest: string;
+  button: string;
+  alt_text: string;
+}
 
 interface HeroSectionProps {
   imageUrls: string[];
+  translations: HeroTranslations;
 }
 
-export const HeroSection = ({ imageUrls }: HeroSectionProps) => {
+export const HeroSection = ({ imageUrls, translations }: HeroSectionProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
@@ -30,7 +44,7 @@ export const HeroSection = ({ imageUrls }: HeroSectionProps) => {
           <Image
             key={index}
             src={url}
-            alt="게임 배경 이미지"
+            alt={translations.alt_text} // 👈 번역된 alt 텍스트 사용
             fill
             sizes="100vw"
             className={`
@@ -45,24 +59,26 @@ export const HeroSection = ({ imageUrls }: HeroSectionProps) => {
 
       <div className="relative z-10 container mx-auto px-4">
         <h2 className="text-4xl md:text-6xl font-extrabold leading-tight text-white">
-          모든 게임 숙제를
+          {translations.title_line1}
           <br />
-          <span className="text-cyan-400">한 곳에서</span> 깔끔하게.
+          <span className="text-cyan-400">{translations.title_line2_span}</span>
+          {translations.title_line2_rest}
         </h2>
-        <p className="mt-6 text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
-          명조, 붕괴: 스타레일, 니케, 로스트아크, 던전앤파이터, 원신,
-          메이플스토리...
+        <p className="mt-6 text-lg md:text-xl text-gray-300 max-w-1xl mx-auto">
+          {translations.subtitle_line1}
           <br />
-          여러 게임의 일일/주간 숙제를 더 이상 헷갈리지 마세요.
+          {translations.subtitle_line2}
           <br />
-          <strong className="text-cyan-400">My Game TODO</strong>로 당신의 게임
-          숙제를 관리해보세요.
+          <strong className="text-cyan-400">
+            {translations.subtitle_line3_strong}
+          </strong>
+          {translations.subtitle_line3_rest}
         </p>
         <Link
           href="/todo"
           className="mt-8 inline-block bg-cyan-500 text-white font-bold text-lg px-8 py-4 rounded-lg hover:bg-cyan-600 transition-transform transform hover:scale-105"
         >
-          지금 바로 시작하기
+          {translations.button}
         </Link>
       </div>
     </section>

@@ -1,4 +1,46 @@
 {
+  "LandingPage": {
+    "Hero": {
+      "title_line1": "所有游戏任务，",
+      "title_line2_span": "一站式",
+      "title_line2_rest": "清晰管理。",
+      "subtitle_line1": "鸣潮, 崩坏：星穹铁道, 胜利女神：妮姬, 失落的方舟, 地下城与勇士, 原神, 冒险岛...",
+      "subtitle_line2": "不再为多个游戏的每日/每周任务而烦恼。",
+      "subtitle_line3_strong": "My Game TODO",
+      "subtitle_line3_rest": " 帮助您轻松管理您的游戏清单。",
+      "button": "立即免费开始",
+      "alt_text": "游戏背景图片"
+    },
+    "Features": {
+      "title": "主要功能",
+      "subtitle": "探索 My Game TODO 提供的强大功能。",
+      "items": [
+        {
+          "title": "支持多种游戏",
+          "description": "注册多个游戏并管理每个角色的任务。"
+        },
+        {
+          "title": "自定义任务管理",
+          "description": "自由添加和检查每日、每周或其他任务，以跟踪您的进度。"
+        },
+        {
+          "title": "自动重置与倒计时",
+          "description": "每日任务每天自动重置，每周任务会显示截止日期倒计时。"
+        }
+      ]
+    },
+    "CTA": {
+      "mainHeading": "您的所有游戏任务，一站式整洁管理。",
+      "subheading": "通过直观的待办事项列表，快速查看已完成的任务，让您更专注于游戏本身。",
+      "button": "免费开始",
+      "previewTitle": "您的所有游戏记录",
+      "previewSubtitle": "一目了然，绝不错过。"
+    },
+    "Footer": {
+      "rights": "All rights reserved.",
+      "privacyPolicy": "隐私政策"
+    }
+  },
   "LoginPage": {
     "title": "登录",
     "noAccount": "还没有账户吗？",

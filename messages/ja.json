@@ -1,4 +1,46 @@
 {
+  "LandingPage": {
+    "Hero": {
+      "title_line1": "全てのゲームの宿題を、",
+      "title_line2_span": "一箇所で",
+      "title_line2_rest": "スマートに。",
+      "subtitle_line1": "鳴潮(Wuthering Waves), 崩壊：スターレイル, NIKKE, LOST ARK, アラド戦記, 原神, メイプルストーリー...",
+      "subtitle_line2": "複数のゲームのデイリー・ウィークリータスク、もう迷うことはありません。",
+      "subtitle_line3_strong": "My Game TODO",
+      "subtitle_line3_rest": "であなたのゲームタスクを管理しましょう。",
+      "button": "今すぐ始める",
+      "alt_text": "ゲーム背景画像"
+    },
+    "Features": {
+      "title": "主な機能",
+      "subtitle": "My Game TODOが提供する強力な機能をご覧ください。",
+      "items": [
+        {
+          "title": "多様なゲーム対応",
+          "description": "複数のゲームを登録し、キャラクターごとにタスクを管理できます。"
+        },
+        {
+          "title": "カスタムタスク管理",
+          "description": "デイリー、ウィークリー、その他のタスクを自由に追加・チェックし、進捗を追跡します。"
+        },
+        {
+          "title": "自動リセット＆D-Day",
+          "description": "デイリータスクは毎日自動的にリセットされ、ウィークリータスクは締め切り日をお知らせします。"
+        }
+      ]
+    },
+    "CTA": {
+      "mainHeading": "全てのゲームの宿題、一箇所でスマートに。",
+      "subheading": "直感的なTODOリストでどの宿題を完了したか一目で把握し、もっとゲームに集中しましょう。",
+      "button": "無料で始める",
+      "previewTitle": "あなたの全てのゲーム記録",
+      "previewSubtitle": "一目で見て、見逃さない。"
+    },
+    "Footer": {
+      "rights": "All rights reserved.",
+      "privacyPolicy": "プライバシーポリシー"
+    }
+  },
   "LoginPage": {
     "title": "ログイン",
     "noAccount": "アカウントをお持ちでないですか？",

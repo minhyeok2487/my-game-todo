@@ -1,4 +1,46 @@
 {
+  "LandingPage": {
+    "Hero": {
+      "title_line1": "All your game tasks,",
+      "title_line2_span": "all in one place.",
+      "title_line2_rest": "",
+      "subtitle_line1": "Wuthering Waves, Honkai: Star Rail, NIKKE, Lost Ark, DNF, Genshin Impact, MapleStory...",
+      "subtitle_line2": "Stop getting confused with daily/weekly tasks across multiple games.",
+      "subtitle_line3_strong": "My Game TODO",
+      "subtitle_line3_rest": " helps you manage your gaming checklist.",
+      "button": "Get Started Now",
+      "alt_text": "Game background image"
+    },
+    "Features": {
+      "title": "Key Features",
+      "subtitle": "Discover the powerful features offered by My Game TODO.",
+      "items": [
+        {
+          "title": "Multi-Game Support",
+          "description": "Register multiple games and manage tasks for each character."
+        },
+        {
+          "title": "Custom Task Management",
+          "description": "Freely add and check daily, weekly, or other tasks to track your progress."
+        },
+        {
+          "title": "Auto-Reset & D-Day",
+          "description": "Daily tasks reset automatically every day, and weekly tasks show a D-Day counter."
+        }
+      ]
+    },
+    "CTA": {
+      "mainHeading": "All your game tasks, neatly in one place.",
+      "subheading": "Quickly see which tasks you've completed with an intuitive TODO list and focus more on your game.",
+      "button": "Get Started for Free",
+      "previewTitle": "All Your Gaming Records",
+      "previewSubtitle": "See it all at a glance, never miss a thing."
+    },
+    "Footer": {
+      "rights": "All rights reserved.",
+      "privacyPolicy": "Privacy Policy"
+    }
+  },
   "LoginPage": {
     "title": "Login",
     "noAccount": "Don't have an account?",

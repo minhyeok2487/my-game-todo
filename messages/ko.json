@@ -1,4 +1,46 @@
 {
+  "LandingPage": {
+    "Hero": {
+      "title_line1": "모든 게임 숙제를",
+      "title_line2_span": "한 곳에서",
+      "title_line2_rest": " 깔끔하게.",
+      "subtitle_line1": "명조, 붕괴: 스타레일, 니케, 로스트아크, 던전앤파이터, 원신, 메이플스토리...",
+      "subtitle_line2": "여러 게임의 일일/주간 숙제를 더 이상 헷갈리지 마세요.",
+      "subtitle_line3_strong": "My Game TODO",
+      "subtitle_line3_rest": "로 당신의 게임 숙제를 관리해보세요.",
+      "button": "지금 바로 시작하기",
+      "alt_text": "게임 배경 이미지"
+    },
+    "Features": {
+      "title": "주요 기능",
+      "subtitle": "My Game TODO가 제공하는 강력한 기능들을 만나보세요.",
+      "items": [
+        {
+          "title": "다양한 게임 지원",
+          "description": "여러 게임을 등록하고, 캐릭터별로 숙제를 관리할 수 있습니다."
+        },
+        {
+          "title": "커스텀 숙제 관리",
+          "description": "일일, 기간, 기타 숙제를 자유롭게 추가하고 체크하며 진행 상황을 추적하세요."
+        },
+        {
+          "title": "자동 초기화 및 D-Day",
+          "description": "일일 숙제는 매일 자동으로 초기화되고, 기간 숙제는 마감일을 알려줍니다."
+        }
+      ]
+    },
+    "CTA": {
+      "mainHeading": "모든 게임의 숙제, 한 곳에서 깔끔하게.",
+      "subheading": "직관적인 TODO 리스트로 어떤 숙제를 완료했는지 한눈에 파악하고, 게임에 더 집중하세요.",
+      "button": "무료로 시작하기",
+      "previewTitle": "당신의 모든 게임 기록",
+      "previewSubtitle": "한눈에 보고, 놓치지 마세요."
+    },
+    "Footer": {
+      "rights": "All rights reserved.",
+      "privacyPolicy": "개인정보 처리방침"
+    }
+  },
   "LoginPage": {
     "title": "로그인",
     "noAccount": "계정이 없으신가요?",
