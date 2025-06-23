@@ -45,21 +45,20 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout(
-  props: Readonly<{
-    children: React.ReactNode;
-    params: { locale: string };
-  }>
-) {
-  const { children } = props;
-  const params = await props.params;
-  const { locale } = params;
+export default async function RootLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
 
   if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
     notFound();
   }
 
-  const messages = await getMessages();
+  const messages = await getMessages({ locale });
 
   return (
     <html lang={locale} suppressHydrationWarning>
