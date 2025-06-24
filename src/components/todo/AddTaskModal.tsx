@@ -82,8 +82,10 @@ export const AddTaskModal = ({
     if (!text.trim()) return;
 
     let finalDueDate: string | null = null;
+
+    // 👇 'misc' 카테고리도 마감일 처리에 포함되도록 조건 수정
     if (
-      modalData.category === "other" &&
+      (modalData.category === "other" || modalData.category === "misc") &&
       (absoluteDueDate || duration.days > 0 || duration.hours > 0)
     ) {
       if (dueDateType === "absolute") {
@@ -142,7 +144,9 @@ export const AddTaskModal = ({
             />
           </div>
 
-          {modalData.category === "other" && (
+          {/* 👇 'misc' 카테고리도 마감일 설정 UI가 보이도록 조건 수정 */}
+          {(modalData.category === "other" ||
+            modalData.category === "misc") && (
             <div className="flex flex-col gap-4 p-4 rounded-md bg-black/20 border border-gray-700">
               <div className="flex gap-2 bg-gray-800 p-1 rounded-md">
                 <button

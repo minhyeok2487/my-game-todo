@@ -100,19 +100,23 @@ const TaskItem = ({
           >
             {task.text}
           </span>
-          {task.category === "other" && task.due_date && !task.completed && (
-            <span
-              className={`text-xs flex items-center gap-1 mt-0.5 ${
-                remainingTime === t("due") ? "text-red-500" : "text-cyan-400"
-              }`}
-            >
-              <Clock size={12} />
-              {remainingTime}
-            </span>
-          )}
+          {/* 👇 'misc' 카테고리도 남은 시간(remainingTime)이 표시되도록 조건 수정 */}
+          {(task.category === "other" || task.category === "misc") &&
+            task.due_date &&
+            !task.completed && (
+              <span
+                className={`text-xs flex items-center gap-1 mt-0.5 ${
+                  remainingTime === t("due") ? "text-red-500" : "text-cyan-400"
+                }`}
+              >
+                <Clock size={12} />
+                {remainingTime}
+              </span>
+            )}
         </div>
       </div>
-      {task.category !== "other" && task.due_date && !task.completed && (
+      {/* 👇 'daily' 카테고리일 때만 D-day가 표시되도록 조건 수정 */}
+      {task.category === "daily" && task.due_date && !task.completed && (
         <span className="text-xs text-gray-400 flex items-center gap-1 ml-auto pl-2">
           <Calendar size={12} />
           {getDday(task.due_date)}
