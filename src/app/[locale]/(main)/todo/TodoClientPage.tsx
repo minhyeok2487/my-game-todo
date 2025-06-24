@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { DndContext, closestCenter, type DragEndEvent } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -28,6 +29,7 @@ export default function TodoClientPage({
   serverGames,
   user,
 }: TodoClientPageProps) {
+  const t = useTranslations("TodoPage");
   const [games, setGames] = useState<Game[]>(serverGames);
   const [viewMode, setViewMode] = useState<"game" | "sorted">("game");
   const [isSelectGameModalOpen, setSelectGameModalOpen] = useState(false);
@@ -63,44 +65,32 @@ export default function TodoClientPage({
     }
   }, [supabase, user.id]);
 
-  // 마감일 순으로 정렬된 숙제 목록 데이터 가공
   const sortedTasks = useMemo(() => {
-    return (
-      games
-        .flatMap((game) =>
-          game.tasks.map((task) => ({
-            ...task,
-            gameName: game.name,
-            characterName: game.character_name,
-            gameImageUrl: game.image_url,
-          }))
-        )
-        // 1. 필터링 조건 수정: 미완료이면서, (일일 숙제 이거나 || 마감일이 있는 숙제)
-        .filter(
-          (task) =>
-            !task.completed && (task.category === "daily" || task.due_date)
-        )
-        // 2. 정렬 로직 수정
-        .sort((a, b) => {
-          // --- 1순위: '일일 숙제'를 최상단으로 ---
-          const isADaily = a.category === "daily";
-          const isBDaily = b.category === "daily";
-
-          if (isADaily && !isBDaily) return -1; // a(일일)가 b(일일 아님)보다 먼저
-          if (!isADaily && isBDaily) return 1; // b(일일)가 a(일일 아님)보다 먼저
-
-          // --- 2순위: 둘 다 '일일 숙제'가 아닐 경우, 마감일 순으로 정렬 ---
-          // (필터링 조건에 의해 둘 다 due_date가 있는 것이 보장됨)
-          if (!isADaily && !isBDaily) {
-            return (
-              new Date(a.due_date!).getTime() - new Date(b.due_date!).getTime()
-            );
-          }
-
-          // --- 둘 다 '일일 숙제'일 경우, 순서 변경 없음 ---
-          return 0;
-        })
-    );
+    return games
+      .flatMap((game) =>
+        game.tasks.map((task) => ({
+          ...task,
+          gameName: game.name,
+          characterName: game.character_name,
+          gameImageUrl: game.image_url,
+        }))
+      )
+      .filter(
+        (task) =>
+          !task.completed && (task.category === "daily" || task.due_date)
+      )
+      .sort((a, b) => {
+        const isADaily = a.category === "daily";
+        const isBDaily = b.category === "daily";
+        if (isADaily && !isBDaily) return -1;
+        if (!isADaily && isBDaily) return 1;
+        if (!isADaily && !isBDaily) {
+          return (
+            new Date(a.due_date!).getTime() - new Date(b.due_date!).getTime()
+          );
+        }
+        return 0;
+      });
   }, [games]);
 
   const handleOpenSelectGameModal = () => setSelectGameModalOpen(true);
@@ -135,16 +125,11 @@ export default function TodoClientPage({
     const gameId = games.find((g) => g.tasks.some((t) => t.id === task.id))?.id;
     if (!gameId) return;
 
+    const categoryText = t(`categories.${task.category}`);
     setTaskModalData({
       gameId: gameId,
       category: task.category,
-      title: `${
-        task.category === "daily"
-          ? "일일"
-          : task.category === "other"
-          ? "기간"
-          : "기타"
-      } 숙제 수정`,
+      title: t("taskModal.editTitle", { category: categoryText }),
     });
     setTaskModalOpen(true);
   };
@@ -154,28 +139,25 @@ export default function TodoClientPage({
     character_name: string;
     image_url: string;
   }) => {
-    // ⭐️ order 계산 로직은 그대로 사용합니다.
     const maxOrder =
       games.length > 0 ? Math.max(...games.map((game) => game.order)) : -1;
-
     const { error } = await supabase.from("games").insert({
       ...newGameData,
       user_id: user.id,
       order: maxOrder + 1,
     });
-
     if (error) {
-      alert("게임 추가 실패: " + error.message);
+      alert(t("alerts.addGameFailed") + " " + error.message);
     } else {
       await fetchGames();
     }
   };
 
   const handleDeleteGame = async (gameId: string) => {
-    if (confirm("정말로 이 게임 카드를 삭제하시겠습니까?")) {
+    if (confirm(t("alerts.confirmDeleteGame"))) {
       const { error } = await supabase.from("games").delete().eq("id", gameId);
       if (error) {
-        alert("게임 삭제 실패: " + error.message);
+        alert(t("alerts.deleteGameFailed") + " " + error.message);
       } else {
         setGames(games.filter((game) => game.id !== gameId));
       }
@@ -195,7 +177,7 @@ export default function TodoClientPage({
       category,
     });
     if (error) {
-      alert("숙제 추가 실패: " + error.message);
+      alert(t("alerts.addTaskFailed") + " " + error.message);
     } else {
       await fetchGames();
     }
@@ -210,7 +192,7 @@ export default function TodoClientPage({
       .update(updates)
       .eq("id", taskId);
     if (error) {
-      alert("숙제 업데이트 실패: " + error.message);
+      alert(t("alerts.updateTaskFailed") + " " + error.message);
     } else {
       await fetchGames();
     }
@@ -222,7 +204,6 @@ export default function TodoClientPage({
       .find((t) => t.id === taskId);
     if (!taskToToggle) return;
 
-    // '마감순 보기'에서는 체크하면 바로 UI에서 숨기기 (Optimistic Update)
     if (viewMode === "sorted") {
       setGames((currentGames) =>
         currentGames.map((game) => ({
@@ -239,7 +220,8 @@ export default function TodoClientPage({
       .update({ completed: !taskToToggle.completed })
       .eq("id", taskId);
     if (error) {
-      alert("상태 변경 실패: " + error.message);
+      alert(t("alerts.toggleTaskFailed") + " " + error.message);
+      await fetchGames(); // 에러 발생 시 원래 상태로 복구
     } else {
       await fetchGames();
     }
@@ -248,7 +230,7 @@ export default function TodoClientPage({
   const handleDeleteTask = async (taskId: string) => {
     const { error } = await supabase.from("tasks").delete().eq("id", taskId);
     if (error) {
-      alert("숙제 삭제 실패: " + error.message);
+      alert(t("alerts.deleteTaskFailed") + " " + error.message);
     } else {
       await fetchGames();
     }
@@ -273,16 +255,16 @@ export default function TodoClientPage({
     const firstError = results.find((result) => result.error);
 
     if (firstError && firstError.error) {
-      alert("순서 저장에 실패했습니다: " + firstError.error.message);
+      alert(t("alerts.saveOrderFailed") + " " + firstError.error.message);
     } else {
-      alert("순서가 저장되었습니다.");
+      alert(t("alerts.saveOrderSuccess"));
       setIsReorderMode(false);
     }
   };
 
   const handleCancelReorder = () => {
     setIsReorderMode(false);
-    fetchGames(); // 순서 변경 전 상태로 되돌리기 위해 데이터를 다시 불러옵니다.
+    fetchGames();
   };
 
   return (
@@ -290,11 +272,11 @@ export default function TodoClientPage({
       {isReorderMode && (
         <button
           onClick={handleSaveOrder}
-          className="fixed top-25 right-18 z-40 cursor-pointer bg-cyan-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-cyan-600 flex items-center gap-2 font-bold transition-transform hover:scale-105"
-          aria-label="순서 저장"
+          className="fixed top-24 right-5 z-40 bg-cyan-500 text-white px-4 py-2 rounded-full shadow-lg hover:bg-cyan-600 flex items-center gap-2 font-bold transition-transform hover:scale-105"
+          aria-label={t("reorder.save_aria")}
         >
           <Save size={18} />
-          <span>순서 저장</span>
+          <span>{t("reorder.save")}</span>
         </button>
       )}
 
@@ -308,7 +290,7 @@ export default function TodoClientPage({
                 : "text-gray-500"
             }`}
           >
-            게임별 보기
+            {t("viewToggle.gameView")}
           </button>
           <button
             onClick={() => setViewMode("sorted")}
@@ -318,7 +300,7 @@ export default function TodoClientPage({
                 : "text-gray-500"
             }`}
           >
-            마감순 보기
+            {t("viewToggle.sortedView")}
           </button>
         </div>
       </div>
@@ -352,7 +334,6 @@ export default function TodoClientPage({
           </SortableContext>
         </DndContext>
       ) : (
-        // --- 새로운 마감순 보기 ---
         <main className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {sortedTasks.map((task) => (
             <SortedTaskCard

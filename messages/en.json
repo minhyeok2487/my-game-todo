@@ -170,5 +170,91 @@
       "setupError": "An error occurred while setting up the profile: {error}",
       "setupSuccess": "Profile setup complete!"
     }
+  },
+  "TodoPage": {
+    "alerts": {
+      "addGameFailed": "Failed to add game:",
+      "confirmDeleteGame": "Are you sure you want to delete this game card?",
+      "deleteGameFailed": "Failed to delete game:",
+      "addTaskFailed": "Failed to add task:",
+      "updateTaskFailed": "Failed to update task:",
+      "toggleTaskFailed": "Failed to change status:",
+      "deleteTaskFailed": "Failed to delete task:",
+      "saveOrderFailed": "Failed to save order:",
+      "saveOrderSuccess": "Order has been saved."
+    },
+    "viewToggle": {
+      "gameView": "By Game",
+      "sortedView": "By Due Date"
+    },
+    "reorder": {
+      "save": "Save Order",
+      "save_aria": "Save Order"
+    },
+    "taskModal": {
+      "editTitle": "Edit {category} Task"
+    },
+    "categories": {
+      "daily": "Daily",
+      "other": "Weekly/Event",
+      "misc": "Misc"
+    },
+    "addGameCard": {
+      "title": "Add New Game"
+    },
+    "addGameModal": {
+      "title_edit": "Confirm Game Info",
+      "title_new": "Add New Game",
+      "label_gameName": "Game Name",
+      "label_charName": "Character Name (Optional)",
+      "label_imageUrl": "Image URL",
+      "button_cancel": "Cancel",
+      "button_confirm": "Add"
+    },
+    "addTaskModal": {
+      "editTitle": "Edit Task",
+      "label_taskText": "Task Content",
+      "dueDateToggle_absolute": "Set Date/Time",
+      "dueDateToggle_relative": "Set by Duration",
+      "label_dueDate": "Due Date",
+      "label_duration": "Time Remaining",
+      "unit_days": "Days",
+      "unit_hours": "Hours",
+      "button_cancel": "Cancel",
+      "button_update": "Update",
+      "button_add": "Add"
+    },
+    "floatingMenu": {
+      "reorder": "Change Order",
+      "settings_aria": "Settings Menu"
+    },
+    "gameCard": {
+      "categories": {
+        "daily": "Daily Tasks",
+        "other": "Timed Tasks",
+        "misc": "Misc"
+      },
+      "taskItem": {
+        "dDay_prefix": "D-",
+        "dDay_today": "D-Day",
+        "dDay_overdue_prefix": "D+",
+        "due": "Due",
+        "editTask_aria": "Edit task: {taskText}",
+        "deleteTask_aria": "Delete task: {taskText}",
+        "timeUnits": {
+          "days": "d",
+          "hours": "h",
+          "minutes": "m"
+        }
+      },
+      "reorder_aria": "Change order",
+      "deleteCard_aria": "Delete game card",
+      "addTask_modalTitle": "New {categoryTitle}",
+      "addTask_aria": "Add {categoryTitle}"
+    },
+    "selectGameModal": {
+      "title": "Select Game",
+      "customGameButton": "Other (Manual Entry)"
+    }
   }
 }

@@ -169,5 +169,91 @@
       "setupError": "프로필 설정 중 오류가 발생했습니다: {error}",
       "setupSuccess": "프로필 설정이 완료되었습니다!"
     }
+  },
+  "TodoPage": {
+    "alerts": {
+      "addGameFailed": "게임 추가 실패:",
+      "confirmDeleteGame": "정말로 이 게임 카드를 삭제하시겠습니까?",
+      "deleteGameFailed": "게임 삭제 실패:",
+      "addTaskFailed": "숙제 추가 실패:",
+      "updateTaskFailed": "숙제 업데이트 실패:",
+      "toggleTaskFailed": "상태 변경 실패:",
+      "deleteTaskFailed": "숙제 삭제 실패:",
+      "saveOrderFailed": "순서 저장에 실패했습니다:",
+      "saveOrderSuccess": "순서가 저장되었습니다."
+    },
+    "viewToggle": {
+      "gameView": "게임별 보기",
+      "sortedView": "마감순 보기"
+    },
+    "reorder": {
+      "save": "순서 저장",
+      "save_aria": "순서 저장"
+    },
+    "taskModal": {
+      "editTitle": "{category} 숙제 수정"
+    },
+    "categories": {
+      "daily": "일일",
+      "other": "기간",
+      "misc": "기타"
+    },
+    "addGameCard": {
+      "title": "새 게임 추가"
+    },
+    "addGameModal": {
+      "title_edit": "게임 정보 확인",
+      "title_new": "새 게임 추가",
+      "label_gameName": "게임 이름",
+      "label_charName": "캐릭터명 (선택)",
+      "label_imageUrl": "이미지 URL",
+      "button_cancel": "취소",
+      "button_confirm": "추가하기"
+    },
+    "addTaskModal": {
+      "editTitle": "숙제 수정",
+      "label_taskText": "숙제 내용",
+      "dueDateToggle_absolute": "날짜/시간 지정",
+      "dueDateToggle_relative": "기간으로 설정",
+      "label_dueDate": "마감일",
+      "label_duration": "마감까지 남은 시간",
+      "unit_days": "일",
+      "unit_hours": "시간",
+      "button_cancel": "취소",
+      "button_update": "수정하기",
+      "button_add": "추가하기"
+    },
+    "floatingMenu": {
+      "reorder": "순서 변경",
+      "settings_aria": "설정 메뉴"
+    },
+    "gameCard": {
+      "categories": {
+        "daily": "일일 숙제",
+        "other": "기간 숙제",
+        "misc": "기타"
+      },
+      "taskItem": {
+        "dDay_prefix": "D-",
+        "dDay_today": "D-Day",
+        "dDay_overdue_prefix": "D+",
+        "due": "마감",
+        "editTask_aria": "{taskText} 숙제 수정",
+        "deleteTask_aria": "{taskText} 숙제 삭제",
+        "timeUnits": {
+          "days": "일",
+          "hours": "시간",
+          "minutes": "분"
+        }
+      },
+      "reorder_aria": "순서 변경",
+      "deleteCard_aria": "게임 카드 삭제",
+      "addTask_modalTitle": "새 {categoryTitle}",
+      "addTask_aria": "{categoryTitle} 추가"
+    },
+    "selectGameModal": {
+      "title": "게임 선택",
+      "customGameButton": "기타 (직접 입력)"
+    }
   }
 }

@@ -1,8 +1,10 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { redirect } from "@/i18n/routing";
 import TodoClientPage from "./TodoClientPage";
+import { getMessages } from "next-intl/server";
+import { NextIntlClientProvider } from "next-intl";
+import { pick } from "lodash";
 
-// 타입 정의
 export type Category = "daily" | "other" | "misc";
 
 export interface Task {
@@ -28,7 +30,6 @@ export default async function TodoPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-
   const supabase = createSupabaseServerClient();
 
   const {
@@ -53,5 +54,11 @@ export default async function TodoPage({
     console.error(error.message);
   }
 
-  return <TodoClientPage serverGames={games || []} user={user!} />;
+  const messages = await getMessages();
+
+  return (
+    <NextIntlClientProvider messages={pick(messages, "TodoPage")}>
+      <TodoClientPage serverGames={games || []} user={user!} />
+    </NextIntlClientProvider>
+  );
 }

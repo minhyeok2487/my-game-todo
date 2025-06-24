@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Settings, X, ListOrdered } from "lucide-react";
 
 interface FloatingMenuProps {
@@ -15,9 +16,9 @@ export const FloatingMenu = ({
   onToggleReorderMode,
   onCancelReorder,
 }: FloatingMenuProps) => {
+  const t = useTranslations("TodoPage.floatingMenu");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // 메인 버튼 클릭 핸들러
   const handleToggleMenu = () => {
     if (isReorderMode) {
       onCancelReorder();
@@ -26,7 +27,6 @@ export const FloatingMenu = ({
     }
   };
 
-  // 메뉴의 '순서 변경' 버튼 클릭 핸들러
   const handleReorderClick = () => {
     onToggleReorderMode();
     setIsMenuOpen(false);
@@ -34,6 +34,7 @@ export const FloatingMenu = ({
 
   return (
     <div className="fixed bottom-8 right-8 flex flex-col items-end gap-3 z-30">
+      {/* 서브 메뉴 버튼들 */}
       <div
         className={`flex flex-col items-end gap-3 transition-all duration-300 ease-in-out ${
           isMenuOpen
@@ -45,16 +46,16 @@ export const FloatingMenu = ({
           onClick={handleReorderClick}
           className="cursor-pointer bg-white text-gray-700 w-max px-4 py-2 rounded-full shadow-lg hover:bg-gray-200 flex items-center gap-3"
         >
-          <span className="font-semibold text-sm">순서 변경</span>
+          <span className="font-semibold text-sm">{t("reorder")}</span>
           <ListOrdered size={20} />
         </button>
       </div>
 
-      {/* 메인 설정 버튼 */}
+      {/* 메인 플로팅 버튼 */}
       <button
         onClick={handleToggleMenu}
         className="cursor-pointer bg-gray-700 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-gray-600 transition-transform duration-300"
-        aria-label="설정 메뉴"
+        aria-label={t("settings_aria")}
         style={{
           transform: isMenuOpen || isReorderMode ? "rotate(45deg)" : "none",
         }}

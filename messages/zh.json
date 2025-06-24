@@ -170,5 +170,91 @@
       "setupError": "设置个人资料时出错：{error}",
       "setupSuccess": "个人资料设置完成！"
     }
+  },
+  "TodoPage": {
+    "alerts": {
+      "addGameFailed": "添加游戏失败：",
+      "confirmDeleteGame": "您确定要删除此游戏卡吗？",
+      "deleteGameFailed": "删除游戏失败：",
+      "addTaskFailed": "添加任务失败：",
+      "updateTaskFailed": "更新任务失败：",
+      "toggleTaskFailed": "更改状态失败：",
+      "deleteTaskFailed": "删除任务失败：",
+      "saveOrderFailed": "保存顺序失败：",
+      "saveOrderSuccess": "顺序已保存。"
+    },
+    "viewToggle": {
+      "gameView": "按游戏",
+      "sortedView": "按截止日期"
+    },
+    "reorder": {
+      "save": "保存顺序",
+      "save_aria": "保存顺序"
+    },
+    "taskModal": {
+      "editTitle": "编辑{category}任务"
+    },
+    "categories": {
+      "daily": "每日",
+      "other": "每周/活动",
+      "misc": "其他"
+    },
+    "addGameCard": {
+      "title": "添加新游戏"
+    },
+    "addGameModal": {
+      "title_edit": "确认游戏信息",
+      "title_new": "添加新游戏",
+      "label_gameName": "游戏名称",
+      "label_charName": "角色名称 (可选)",
+      "label_imageUrl": "图片网址",
+      "button_cancel": "取消",
+      "button_confirm": "添加"
+    },
+    "addTaskModal": {
+      "editTitle": "编辑任务",
+      "label_taskText": "任务内容",
+      "dueDateToggle_absolute": "设置日期/时间",
+      "dueDateToggle_relative": "按时长设置",
+      "label_dueDate": "截止日期",
+      "label_duration": "剩余时间",
+      "unit_days": "天",
+      "unit_hours": "小时",
+      "button_cancel": "取消",
+      "button_update": "更新",
+      "button_add": "添加"
+    },
+    "floatingMenu": {
+      "reorder": "更改顺序",
+      "settings_aria": "设置菜单"
+    },
+    "gameCard": {
+      "categories": {
+        "daily": "每日任务",
+        "other": "限时任务",
+        "misc": "其他"
+      },
+      "taskItem": {
+        "dDay_prefix": "D-",
+        "dDay_today": "今天截止",
+        "dDay_overdue_prefix": "D+",
+        "due": "已截止",
+        "editTask_aria": "编辑任务: {taskText}",
+        "deleteTask_aria": "删除任务: {taskText}",
+        "timeUnits": {
+          "days": "天",
+          "hours": "小时",
+          "minutes": "分钟"
+        }
+      },
+      "reorder_aria": "更改顺序",
+      "deleteCard_aria": "删除游戏卡",
+      "addTask_modalTitle": "新{categoryTitle}",
+      "addTask_aria": "添加{categoryTitle}"
+    },
+    "selectGameModal": {
+      "title": "选择游戏",
+      "customGameButton": "其他 (手动输入)"
+    }
   }
 }

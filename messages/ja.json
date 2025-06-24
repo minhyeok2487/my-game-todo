@@ -170,5 +170,91 @@
       "setupError": "プロフィールの設定中にエラーが発生しました: {error}",
       "setupSuccess": "プロフィール設定が完了しました！"
     }
+  },
+  "TodoPage": {
+    "alerts": {
+      "addGameFailed": "ゲームの追加に失敗しました:",
+      "confirmDeleteGame": "本当にこのゲームカードを削除しますか？",
+      "deleteGameFailed": "ゲームの削除に失敗しました:",
+      "addTaskFailed": "タスクの追加に失敗しました:",
+      "updateTaskFailed": "タスクの更新に失敗しました:",
+      "toggleTaskFailed": "状態の変更に失敗しました:",
+      "deleteTaskFailed": "タスクの削除に失敗しました:",
+      "saveOrderFailed": "順序の保存に失敗しました:",
+      "saveOrderSuccess": "順序が保存されました。"
+    },
+    "viewToggle": {
+      "gameView": "ゲーム別",
+      "sortedView": "締め切り順"
+    },
+    "reorder": {
+      "save": "順序を保存",
+      "save_aria": "順序を保存"
+    },
+    "taskModal": {
+      "editTitle": "{category}タスクを編集"
+    },
+    "categories": {
+      "daily": "デイリー",
+      "other": "期間・イベント",
+      "misc": "その他"
+    },
+    "addGameCard": {
+      "title": "新しいゲームを追加"
+    },
+    "addGameModal": {
+      "title_edit": "ゲーム情報の確認",
+      "title_new": "新しいゲームを追加",
+      "label_gameName": "ゲーム名",
+      "label_charName": "キャラクター名 (任意)",
+      "label_imageUrl": "画像URL",
+      "button_cancel": "キャンセル",
+      "button_confirm": "追加"
+    },
+    "addTaskModal": {
+      "editTitle": "タスクを編集",
+      "label_taskText": "タスク内容",
+      "dueDateToggle_absolute": "日時指定",
+      "dueDateToggle_relative": "期間で設定",
+      "label_dueDate": "締め切り",
+      "label_duration": "締め切りまでの残り時間",
+      "unit_days": "日",
+      "unit_hours": "時間",
+      "button_cancel": "キャンセル",
+      "button_update": "更新",
+      "button_add": "追加"
+    },
+    "floatingMenu": {
+      "reorder": "順序変更",
+      "settings_aria": "設定メニュー"
+    },
+    "gameCard": {
+      "categories": {
+        "daily": "日課",
+        "other": "期間タスク",
+        "misc": "その他"
+      },
+      "taskItem": {
+        "dDay_prefix": "D-",
+        "dDay_today": "D-Day",
+        "dDay_overdue_prefix": "D+",
+        "due": "締め切り",
+        "editTask_aria": "タスク「{taskText}」を編集",
+        "deleteTask_aria": "タスク「{taskText}」を削除",
+        "timeUnits": {
+          "days": "日",
+          "hours": "時間",
+          "minutes": "分"
+        }
+      },
+      "reorder_aria": "順序変更",
+      "deleteCard_aria": "ゲームカードを削除",
+      "addTask_modalTitle": "新規{categoryTitle}",
+      "addTask_aria": "{categoryTitle}を追加"
+    },
+    "selectGameModal": {
+      "title": "ゲームを選択",
+      "customGameButton": "その他 (直接入力)"
+    }
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import type { Category, Task } from "@/app/[locale]/(main)/todo/page";
 
 interface AddTaskModalProps {
@@ -31,6 +32,8 @@ export const AddTaskModal = ({
   taskToEdit,
   onUpdateTask,
 }: AddTaskModalProps) => {
+  const t = useTranslations("TodoPage.addTaskModal");
+
   const [text, setText] = useState("");
   const [dueDateType, setDueDateType] = useState<"absolute" | "relative">(
     "absolute"
@@ -109,30 +112,25 @@ export const AddTaskModal = ({
   if (!isOpen) return null;
 
   return (
-    // ⭐️ 배경(Backdrop) div
     <div
       className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
-      // ⭐️⭐️⭐️ 핵심 수정 사항 ⭐️⭐️⭐️
-      // 클릭 이벤트의 target과 currentTarget이 같을 때만 onClose를 호출합니다.
-      // 즉, 순수하게 배경을 클릭했을 때만 모달이 닫히도록 합니다.
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           onClose();
         }
       }}
     >
-      {/* 모달 컨텐츠 div */}
       <div
-        className="bg-[#1F2937] p-8 rounded-lg w-full max-w-md border border-[#374151]"
-        onClick={(e) => e.stopPropagation()} // 이 부분은 그대로 유지합니다.
+        className="bg-gray-800 p-8 rounded-lg w-full max-w-md border border-gray-700 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-2xl font-bold mb-6 text-white">
-          {isEditMode ? "숙제 수정" : modalData.title}
+          {isEditMode ? t("editTitle") : modalData.title}
         </h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <label htmlFor="task-text" className="font-semibold text-gray-300">
-              숙제 내용
+              {t("label_taskText")}
             </label>
             <input
               id="task-text"
@@ -140,7 +138,7 @@ export const AddTaskModal = ({
               value={text}
               onChange={(e) => setText(e.target.value)}
               required
-              className="bg-[#111827] border border-[#374151] rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white"
+              className="bg-gray-900 border border-gray-700 rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white"
             />
           </div>
 
@@ -156,7 +154,7 @@ export const AddTaskModal = ({
                       : "bg-transparent text-gray-300 hover:bg-gray-700"
                   }`}
                 >
-                  날짜/시간 지정
+                  {t("dueDateToggle_absolute")}
                 </button>
                 <button
                   type="button"
@@ -167,7 +165,7 @@ export const AddTaskModal = ({
                       : "bg-transparent text-gray-300 hover:bg-gray-700"
                   }`}
                 >
-                  기간으로 설정
+                  {t("dueDateToggle_relative")}
                 </button>
               </div>
 
@@ -177,26 +175,26 @@ export const AddTaskModal = ({
                     htmlFor="due-date-abs"
                     className="font-semibold text-gray-300 text-sm"
                   >
-                    마감일
+                    {t("label_dueDate")}
                   </label>
                   <input
                     id="due-date-abs"
                     type="datetime-local"
                     value={absoluteDueDate}
                     onChange={(e) => setAbsoluteDueDate(e.target.value)}
-                    className="cursor-pointer bg-[#111827] border border-[#374151] rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white [color-scheme:dark]"
+                    className="cursor-pointer bg-gray-900 border border-gray-700 rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white [color-scheme:dark]"
                     required
                   />
                 </div>
               ) : (
                 <div className="flex flex-col gap-2">
                   <label className="font-semibold text-gray-300 text-sm">
-                    마감까지 남은 시간
+                    {t("label_duration")}
                   </label>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <span className="text-xs text-center block mb-1 text-gray-400">
-                        일
+                        {t("unit_days")}
                       </span>
                       <input
                         type="number"
@@ -207,13 +205,13 @@ export const AddTaskModal = ({
                             days: Number(e.target.value),
                           }))
                         }
-                        className="bg-[#111827] border border-[#374151] rounded-md p-3 w-full outline-none text-white text-center focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="bg-gray-900 border border-gray-700 rounded-md p-3 w-full outline-none text-white text-center focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         placeholder="0"
                       />
                     </div>
                     <div>
                       <span className="text-xs text-center block mb-1 text-gray-400">
-                        시간
+                        {t("unit_hours")}
                       </span>
                       <input
                         type="number"
@@ -224,7 +222,7 @@ export const AddTaskModal = ({
                             hours: Number(e.target.value),
                           }))
                         }
-                        className="bg-[#111827] border border-[#374151] rounded-md p-3 w-full outline-none text-white text-center focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="bg-gray-900 border border-gray-700 rounded-md p-3 w-full outline-none text-white text-center focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         placeholder="0"
                       />
                     </div>
@@ -238,15 +236,15 @@ export const AddTaskModal = ({
             <button
               type="button"
               onClick={onClose}
-              className="cursor-pointer px-5 py-2 rounded-lg bg-gray-600 hover:bg-gray-700 font-semibold text-white"
+              className="cursor-pointer px-5 py-2 rounded-lg bg-gray-600 hover:bg-gray-700 font-semibold text-white transition-colors"
             >
-              취소
+              {t("button_cancel")}
             </button>
             <button
               type="submit"
-              className="cursor-pointer px-5 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-600 text-white font-semibold"
+              className="cursor-pointer px-5 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-600 text-white font-semibold transition-colors"
             >
-              {isEditMode ? "수정하기" : "추가하기"}
+              {isEditMode ? t("button_update") : t("button_add")}
             </button>
           </div>
         </form>

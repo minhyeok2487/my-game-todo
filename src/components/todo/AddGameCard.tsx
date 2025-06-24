@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Plus } from "lucide-react";
 
 interface AddGameCardProps {
@@ -5,6 +6,8 @@ interface AddGameCardProps {
 }
 
 export const AddGameCard = ({ onOpenModal }: AddGameCardProps) => {
+  const t = useTranslations("TodoPage.addGameCard");
+
   return (
     <button
       onClick={onOpenModal}
@@ -12,7 +15,7 @@ export const AddGameCard = ({ onOpenModal }: AddGameCardProps) => {
       justify-center text-gray-500 hover:text-cyan-400 hover:border-cyan-400 transition-colors min-h-[400px]"
     >
       <Plus size={48} />
-      <span className="mt-2 font-semibold">새 게임 추가</span>
+      <span className="mt-2 font-semibold">{t("title")}</span>
     </button>
   );
 };

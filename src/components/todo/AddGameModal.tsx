@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 
-// ⭐️ 1. onAddGame이 받을 데이터 타입을 직접 간단하게 정의합니다.
 interface NewGameData {
   name: string;
   character_name: string;
@@ -12,7 +12,6 @@ interface NewGameData {
 interface AddGameModalProps {
   isOpen: boolean;
   onClose: () => void;
-  // ⭐️ 2. onAddGame prop의 타입을 수정한 타입으로 변경합니다.
   onAddGame: (gameData: NewGameData) => void;
   initialData?: {
     name: string;
@@ -26,7 +25,8 @@ export const AddGameModal = ({
   onAddGame,
   initialData,
 }: AddGameModalProps) => {
-  // 모달 내부 상태는 camelCase로 관리
+  const t = useTranslations("TodoPage.addGameModal");
+
   const [name, setName] = useState("");
   const [characterName, setCharacterName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -60,16 +60,16 @@ export const AddGameModal = ({
       onClick={onClose}
     >
       <div
-        className="bg-[#1F2937] p-8 rounded-lg w-full max-w-md border border-[#374151]"
+        className="bg-gray-800 p-8 rounded-lg w-full max-w-md border border-gray-700 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-2xl font-bold mb-6 text-white">
-          {initialData ? "게임 정보 확인" : "새 게임 추가"}
+          {initialData ? t("title_edit") : t("title_new")}
         </h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <label htmlFor="game-name" className="font-semibold text-gray-300">
-              게임 이름
+              {t("label_gameName")}
             </label>
             <input
               id="game-name"
@@ -77,46 +77,46 @@ export const AddGameModal = ({
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className="bg-[#111827] border border-[#374151] rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white"
+              className="bg-gray-900 border border-gray-700 rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white"
             />
           </div>
           <div className="flex flex-col gap-2">
             <label htmlFor="char-name" className="font-semibold text-gray-300">
-              캐릭터명 (선택)
+              {t("label_charName")}
             </label>
             <input
               id="char-name"
               type="text"
               value={characterName}
               onChange={(e) => setCharacterName(e.target.value)}
-              className="bg-[#111827] border border-[#374151] rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white"
+              className="bg-gray-900 border border-gray-700 rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white"
             />
           </div>
           <div className="flex flex-col gap-2">
             <label htmlFor="image-url" className="font-semibold text-gray-300">
-              이미지 URL
+              {t("label_imageUrl")}
             </label>
             <input
               id="image-url"
               type="text"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
-              className="bg-[#111827] border border-[#374151] rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white"
+              className="bg-gray-900 border border-gray-700 rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white"
             />
           </div>
           <div className="flex justify-end gap-4 mt-6">
             <button
               type="button"
               onClick={onClose}
-              className="cursor-pointer px-5 py-2 rounded-lg bg-gray-600 hover:bg-gray-700 font-semibold text-white"
+              className="cursor-pointer px-5 py-2 rounded-lg bg-gray-600 hover:bg-gray-700 font-semibold text-white transition-colors"
             >
-              취소
+              {t("button_cancel")}
             </button>
             <button
               type="submit"
-              className="cursor-pointer px-5 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-600 text-white font-semibold"
+              className="cursor-pointer px-5 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-600 text-white font-semibold transition-colors"
             >
-              추가하기
+              {t("button_confirm")}
             </button>
           </div>
         </form>

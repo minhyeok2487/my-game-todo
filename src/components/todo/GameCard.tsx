@@ -2,7 +2,7 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-
+import { useTranslations } from "next-intl";
 import type { Game, Category, Task } from "@/app/[locale]/(main)/todo/page";
 import {
   Plus,
@@ -15,7 +15,11 @@ import {
 } from "lucide-react";
 import { formatRemainingTime } from "@/lib/utils/times";
 
-// GameCard가 받을 props 정의
+type ScopedTFunction = (
+  key: string,
+  values?: Record<string, string | number>
+) => string;
+
 interface GameCardProps {
   game: Game;
   onDeleteGame: (gameId: string) => void;
@@ -26,19 +30,19 @@ interface GameCardProps {
   isReorderMode: boolean;
 }
 
-// TaskItem 하위 컴포넌트
 const TaskItem = ({
   task,
   onToggle,
   onDelete,
   onEdit,
+  t,
 }: {
   task: Task;
   onToggle: () => void;
   onDelete: () => void;
   onEdit: () => void;
+  t: ScopedTFunction;
 }) => {
-  // D-day 계산 함수
   const getDday = (dueDate: string | null) => {
     if (!dueDate) return null;
     const today = new Date();
@@ -53,17 +57,25 @@ const TaskItem = ({
     if (diffDays < 0)
       return (
         <span className="text-xs text-red-500 font-semibold">
-          D+{Math.abs(diffDays)}
+          {t("dDay_overdue_prefix")}
+          {Math.abs(diffDays)}
         </span>
       );
     if (diffDays === 0)
       return (
-        <span className="text-xs text-yellow-400 font-semibold">D-Day</span>
+        <span className="text-xs text-yellow-400 font-semibold">
+          {t("dDay_today")}
+        </span>
       );
-    return `D-${diffDays}`;
+    return `${t("dDay_prefix")}${diffDays}`;
   };
 
-  const remainingTime = formatRemainingTime(task.due_date);
+  const remainingTime = formatRemainingTime(task.due_date, {
+    dueText: t("due"),
+    days: t("timeUnits.days"),
+    hours: t("timeUnits.hours"),
+    minutes: t("timeUnits.minutes"),
+  });
 
   return (
     <li className="flex items-center justify-between py-1.5 group">
@@ -80,8 +92,6 @@ const TaskItem = ({
         >
           {task.completed && <Check size={16} className="text-white" />}
         </div>
-
-        {/* ⭐️ 1. 텍스트와 마감일을 세로로 묶는 div */}
         <div className="flex flex-col flex-grow min-w-0">
           <span
             className={`truncate ${
@@ -90,14 +100,11 @@ const TaskItem = ({
           >
             {task.text}
           </span>
-
-          {/* ⭐️ 2. '기간 숙제'일 때만 새로운 디자인으로 남은 시간 표시 */}
           {task.category === "other" && task.due_date && !task.completed && (
             <span
-              className={`
-          text-xs flex items-center gap-1 mt-0.5
-          ${remainingTime === "마감" ? "text-red-500" : "text-cyan-400"}
-        `}
+              className={`text-xs flex items-center gap-1 mt-0.5 ${
+                remainingTime === t("due") ? "text-red-500" : "text-cyan-400"
+              }`}
             >
               <Clock size={12} />
               {remainingTime}
@@ -105,16 +112,12 @@ const TaskItem = ({
           )}
         </div>
       </div>
-
-      {/* ⭐️ 3. '기간 숙제'가 아닐 경우, 기존 D-day를 오른쪽에 표시 */}
       {task.category !== "other" && task.due_date && !task.completed && (
         <span className="text-xs text-gray-400 flex items-center gap-1 ml-auto pl-2">
           <Calendar size={12} />
           {getDday(task.due_date)}
         </span>
       )}
-
-      {/* 수정/삭제 버튼 (변경 없음) */}
       <div className="flex items-center ml-2 shrink-0">
         <button
           onClick={(e) => {
@@ -122,7 +125,7 @@ const TaskItem = ({
             onEdit();
           }}
           className="cursor-pointer text-gray-500 hover:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity p-1"
-          aria-label={`${task.text} 숙제 수정`}
+          aria-label={t("editTask_aria", { taskText: task.text })}
         >
           <Pencil size={16} />
         </button>
@@ -132,7 +135,7 @@ const TaskItem = ({
             onDelete();
           }}
           className="cursor-pointer text-gray-500 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1"
-          aria-label={`${task.text} 숙제 삭제`}
+          aria-label={t("deleteTask_aria", { taskText: task.text })}
         >
           <X size={16} />
         </button>
@@ -141,7 +144,6 @@ const TaskItem = ({
   );
 };
 
-// 메인 게임 카드 컴포넌트
 export const GameCard = ({
   game,
   onDeleteGame,
@@ -151,7 +153,7 @@ export const GameCard = ({
   onEditTask,
   isReorderMode,
 }: GameCardProps) => {
-  // dnd-kit 훅
+  const t = useTranslations("TodoPage.gameCard");
   const {
     attributes,
     listeners,
@@ -161,7 +163,6 @@ export const GameCard = ({
     isDragging,
   } = useSortable({ id: game.id, disabled: !isReorderMode });
 
-  // 드래그 중 스타일 적용
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -169,30 +170,31 @@ export const GameCard = ({
     zIndex: isDragging ? 10 : 1,
   };
 
-  const categories: { key: Category; title: string }[] = [
-    { key: "daily", title: "일일 숙제" },
-    { key: "other", title: "기간 숙제" },
-    { key: "misc", title: "기타" },
+  const categories = [
+    { key: "daily" as Category, title: t("categories.daily") },
+    { key: "other" as Category, title: t("categories.other") },
+    { key: "misc" as Category, title: t("categories.misc") },
   ];
+
+  const tForItem: ScopedTFunction = (key, values) =>
+    t(`taskItem.${key}`, values);
 
   return (
     <div
-      ref={setNodeRef} // ⭐️ dnd-kit 참조 연결
-      style={style} // ⭐️ dnd-kit 스타일 적용
-      {...attributes} // ⭐️ dnd-kit 속성 적용
-      className="bg-[#1F2937] rounded-lg border border-[#374151] flex flex-col shadow-lg min-h-[400px] relative touch-none"
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      className="bg-gray-800 rounded-lg border border-gray-700 flex flex-col shadow-lg min-h-[400px] relative touch-none"
     >
-      {/* 순서 변경 모드일 때만 드래그 핸들 표시 */}
       {isReorderMode && (
         <div
-          {...listeners} // ⭐️ 이 부분만 잡고 드래그 가능
+          {...listeners}
           className="absolute top-2 left-2 p-1.5 bg-black/50 rounded-full text-white cursor-grab active:cursor-grabbing z-20"
-          aria-label="순서 변경"
+          aria-label={t("reorder_aria")}
         >
           <GripVertical size={20} />
         </div>
       )}
-
       <div
         className="h-36 bg-cover bg-center rounded-t-lg relative"
         style={{
@@ -201,12 +203,11 @@ export const GameCard = ({
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-        {/* 순서 변경 모드에서는 삭제 버튼 비활성화 */}
         {!isReorderMode && (
           <button
             onClick={() => onDeleteGame(game.id)}
             className="cursor-pointer absolute top-2 right-2 p-1.5 bg-black/50 rounded-full text-white hover:bg-red-500 transition-colors z-10"
-            aria-label="게임 카드 삭제"
+            aria-label={t("deleteCard_aria")}
           >
             <X size={18} />
           </button>
@@ -224,21 +225,23 @@ export const GameCard = ({
         {categories.map(({ key, title }) => (
           <div key={key} className="mb-4">
             <div className="flex justify-between items-center mb-2">
-              <h4 className="font-bold text-cyan-500 dark:text-cyan-400">
-                {title}
-              </h4>
-
+              <h4 className="font-bold text-cyan-400">{title}</h4>
               {!isReorderMode && (
                 <button
-                  onClick={() => onOpenTaskModal(game.id, key, `새 ${title}`)}
+                  onClick={() =>
+                    onOpenTaskModal(
+                      game.id,
+                      key,
+                      t("addTask_modalTitle", { categoryTitle: title })
+                    )
+                  }
                   className="cursor-pointer text-gray-400 hover:text-cyan-500 dark:hover:text-cyan-400 p-1 rounded-full transition-colors"
-                  aria-label={`${title} 추가`}
+                  aria-label={t("addTask_aria", { categoryTitle: title })}
                 >
                   <Plus size={20} />
                 </button>
               )}
             </div>
-
             <ul className="space-y-1">
               {game.tasks
                 .filter((task) => task.category === key)
@@ -249,6 +252,7 @@ export const GameCard = ({
                     onToggle={() => onToggleTask(task.id)}
                     onDelete={() => onDeleteTask(task.id)}
                     onEdit={() => onEditTask(task)}
+                    t={tForItem}
                   />
                 ))}
             </ul>
