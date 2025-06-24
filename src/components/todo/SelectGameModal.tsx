@@ -4,7 +4,16 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
 import { X, PlusSquare } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+
+interface PredefinedGameFromDB {
+  id: number;
+  name_ko: string;
+  name_en: string;
+  name_ja: string;
+  name_zh: string;
+  default_image_url: string;
+}
 
 interface PredefinedGame {
   id: number;
@@ -26,6 +35,7 @@ export const SelectGameModal = ({
   onSelectCustom,
 }: SelectGameModalProps) => {
   const t = useTranslations("TodoPage.selectGameModal");
+  const locale = useLocale();
   const [predefinedGames, setPredefinedGames] = useState<PredefinedGame[]>([]);
   const supabase = createClient();
 
@@ -34,14 +44,31 @@ export const SelectGameModal = ({
       const fetchPredefinedGames = async () => {
         const { data, error } = await supabase
           .from("predefined_games")
-          .select("id, name, default_image_url")
+          .select("id, name_ko, name_en, name_ja, name_zh, default_image_url")
           .order("id");
-        if (data) setPredefinedGames(data);
-        if (error) console.error("Error fetching predefined games:", error);
+
+        if (error) {
+          console.error("Error fetching predefined games:", error);
+          return;
+        }
+
+        if (data) {
+          const transformedData = data.map((item: PredefinedGameFromDB) => {
+            const localizedName =
+              item[`name_${locale}` as keyof typeof item] || item.name_ko;
+
+            return {
+              id: item.id,
+              name: localizedName as string,
+              default_image_url: item.default_image_url,
+            };
+          });
+          setPredefinedGames(transformedData);
+        }
       };
       fetchPredefinedGames();
     }
-  }, [isOpen, supabase]);
+  }, [isOpen, supabase, locale]);
 
   if (!isOpen) return null;
 
