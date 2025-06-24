@@ -109,7 +109,7 @@ export const AddGameModal = ({
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className="bg-gray-900 ..."
+              className="bg-gray-900 border border-gray-700 rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white"
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -121,7 +121,7 @@ export const AddGameModal = ({
               type="text"
               value={characterName}
               onChange={(e) => setCharacterName(e.target.value)}
-              className="bg-gray-900 ..."
+              className="bg-gray-900 border border-gray-700 rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white"
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -133,7 +133,7 @@ export const AddGameModal = ({
               type="text"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
-              className="bg-gray-900 ..."
+              className="bg-gray-900 border border-gray-700 rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white"
             />
           </div>
 
@@ -168,11 +168,14 @@ export const AddGameModal = ({
             <button
               type="button"
               onClick={onClose}
-              className="cursor-pointer px-5 py-2 ..."
+              className="cursor-pointer px-5 py-2 rounded-lg bg-gray-600 hover:bg-gray-700 font-semibold text-white transition-colors"
             >
               {t("button_cancel")}
             </button>
-            <button type="submit" className="cursor-pointer px-5 py-2 ...">
+            <button
+              type="submit"
+              className="cursor-pointer px-5 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-600 text-white font-semibold transition-colors"
+            >
               {t("button_confirm")}
             </button>
           </div>
