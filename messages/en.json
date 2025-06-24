@@ -209,7 +209,8 @@
       "label_charName": "Character Name (Optional)",
       "label_imageUrl": "Image URL",
       "button_cancel": "Cancel",
-      "button_confirm": "Add"
+      "button_confirm": "Add",
+      "recommended_tasks_title": "Add Recommended Tasks (Optional)"
     },
     "addTaskModal": {
       "editTitle": "Edit Task",

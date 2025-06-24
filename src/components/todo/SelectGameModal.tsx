@@ -24,7 +24,7 @@ interface PredefinedGame {
 interface SelectGameModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelectGame: (game: { name: string; default_image_url: string }) => void;
+  onSelectGame: (game: PredefinedGame) => void;
   onSelectCustom: () => void;
 }
 

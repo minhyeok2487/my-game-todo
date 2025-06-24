@@ -208,7 +208,8 @@
       "label_charName": "캐릭터명 (선택)",
       "label_imageUrl": "이미지 URL",
       "button_cancel": "취소",
-      "button_confirm": "추가하기"
+      "button_confirm": "추가하기",
+      "recommended_tasks_title": "추천 숙제 추가 (선택)"
     },
     "addTaskModal": {
       "editTitle": "숙제 수정",

@@ -209,7 +209,8 @@
       "label_charName": "角色名称 (可选)",
       "label_imageUrl": "图片网址",
       "button_cancel": "取消",
-      "button_confirm": "添加"
+      "button_confirm": "添加",
+      "recommended_tasks_title": "添加推荐任务 (可选)"
     },
     "addTaskModal": {
       "editTitle": "编辑任务",

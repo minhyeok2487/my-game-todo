@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { DndContext, closestCenter, type DragEndEvent } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -14,7 +14,10 @@ import { createClient } from "@/lib/supabase/client";
 import { GameCard } from "@/components/todo/GameCard";
 import { AddGameCard } from "@/components/todo/AddGameCard";
 import { SelectGameModal } from "@/components/todo/SelectGameModal";
-import { AddGameModal } from "@/components/todo/AddGameModal";
+import {
+  AddGameModal,
+  type RecommendedTask,
+} from "@/components/todo/AddGameModal";
 import { AddTaskModal } from "@/components/todo/AddTaskModal";
 import { FloatingMenu } from "@/components/todo/FloatingMenu";
 import { SortedTaskCard } from "@/components/todo/SortedTaskCard";
@@ -30,6 +33,7 @@ export default function TodoClientPage({
   user,
 }: TodoClientPageProps) {
   const t = useTranslations("TodoPage");
+  const locale = useLocale();
   const [games, setGames] = useState<Game[]>(serverGames);
   const [viewMode, setViewMode] = useState<"game" | "sorted">("game");
   const [isSelectGameModalOpen, setSelectGameModalOpen] = useState(false);
@@ -46,6 +50,9 @@ export default function TodoClientPage({
     title: string;
   } | null>(null);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [recommendedTasks, setRecommendedTasks] = useState<RecommendedTask[]>(
+    []
+  );
 
   const supabase = createClient();
 
@@ -95,16 +102,38 @@ export default function TodoClientPage({
 
   const handleOpenSelectGameModal = () => setSelectGameModalOpen(true);
 
-  const handleSelectPredefinedGame = (game: {
+  const handleSelectPredefinedGame = async (game: {
+    id: number;
     name: string;
     default_image_url: string;
   }) => {
+    const { data, error } = await supabase
+      .from("recommended_tasks")
+      .select("text_ko, text_en, text_ja, text_zh, category")
+      .eq("game_id", game.id);
+
+    if (error) {
+      console.error("추천 숙제 로딩 실패:", error);
+      setRecommendedTasks([]);
+    } else {
+      const tasks = data.map((item) => {
+        const localizedText =
+          item[`text_${locale}` as keyof typeof item] || item.text_ko;
+        return {
+          text: localizedText as string,
+          category: item.category,
+        };
+      });
+      setRecommendedTasks(tasks);
+    }
+
     setInitialGameData({ name: game.name, imageUrl: game.default_image_url });
     setSelectGameModalOpen(false);
     setAddGameModalOpen(true);
   };
 
   const handleSelectCustomGame = () => {
+    setRecommendedTasks([]);
     setInitialGameData(null);
     setSelectGameModalOpen(false);
     setAddGameModalOpen(true);
@@ -134,23 +163,47 @@ export default function TodoClientPage({
     setTaskModalOpen(true);
   };
 
-  const handleAddGame = async (newGameData: {
-    name: string;
-    character_name: string;
-    image_url: string;
-  }) => {
+  const handleAddGame = async (
+    newGameData: {
+      name: string;
+      character_name: string;
+      image_url: string;
+    },
+    selectedTasks: RecommendedTask[]
+  ) => {
     const maxOrder =
       games.length > 0 ? Math.max(...games.map((game) => game.order)) : -1;
-    const { error } = await supabase.from("games").insert({
-      ...newGameData,
-      user_id: user.id,
-      order: maxOrder + 1,
-    });
-    if (error) {
-      alert(t("alerts.addGameFailed") + " " + error.message);
-    } else {
-      await fetchGames();
+
+    const { data: newGame, error: gameError } = await supabase
+      .from("games")
+      .insert({
+        ...newGameData,
+        user_id: user.id,
+        order: maxOrder + 1,
+      })
+      .select()
+      .single();
+
+    if (gameError) {
+      alert(t("alerts.addGameFailed") + " " + gameError.message);
+      return;
     }
+
+    if (selectedTasks.length > 0) {
+      const tasksToInsert = selectedTasks.map((task) => ({
+        ...task,
+        game_id: newGame.id,
+        user_id: user.id,
+        completed: false,
+      }));
+      const { error: tasksError } = await supabase
+        .from("tasks")
+        .insert(tasksToInsert);
+      if (tasksError) {
+        alert(t("alerts.addTaskFailed") + " " + tasksError.message);
+      }
+    }
+    await fetchGames();
   };
 
   const handleDeleteGame = async (gameId: string) => {
@@ -221,7 +274,7 @@ export default function TodoClientPage({
       .eq("id", taskId);
     if (error) {
       alert(t("alerts.toggleTaskFailed") + " " + error.message);
-      await fetchGames(); // 에러 발생 시 원래 상태로 복구
+      await fetchGames();
     } else {
       await fetchGames();
     }
@@ -253,7 +306,6 @@ export default function TodoClientPage({
     );
     const results = await Promise.all(updates);
     const firstError = results.find((result) => result.error);
-
     if (firstError && firstError.error) {
       alert(t("alerts.saveOrderFailed") + " " + firstError.error.message);
     } else {
@@ -268,7 +320,7 @@ export default function TodoClientPage({
   };
 
   return (
-    <div className="container max-w-screen-2xl mx-auto relative">
+    <div className="container max-w-screen-2xl mx-auto relative p-4 md:p-6">
       {isReorderMode && (
         <button
           onClick={handleSaveOrder}
@@ -281,23 +333,23 @@ export default function TodoClientPage({
       )}
 
       <div className="mb-6 flex justify-center">
-        <div className="bg-gray-200 dark:bg-gray-800 p-1 rounded-full flex items-center">
+        <div className="bg-gray-800 p-1 rounded-full flex items-center">
           <button
             onClick={() => setViewMode("game")}
-            className={`cursor-pointer px-4 py-1.5 text-sm font-semibold rounded-full ${
+            className={`cursor-pointer px-4 py-1.5 text-sm font-semibold rounded-full transition-colors ${
               viewMode === "game"
-                ? "bg-white dark:bg-gray-600 text-gray-800 dark:text-white"
-                : "text-gray-500"
+                ? "bg-gray-600 text-white"
+                : "text-gray-400 hover:text-white"
             }`}
           >
             {t("viewToggle.gameView")}
           </button>
           <button
             onClick={() => setViewMode("sorted")}
-            className={`cursor-pointer px-4 py-1.5 text-sm font-semibold rounded-full ${
+            className={`cursor-pointer px-4 py-1.5 text-sm font-semibold rounded-full transition-colors ${
               viewMode === "sorted"
-                ? "bg-white dark:bg-gray-600 text-gray-800 dark:text-white"
-                : "text-gray-500"
+                ? "bg-gray-600 text-white"
+                : "text-gray-400 hover:text-white"
             }`}
           >
             {t("viewToggle.sortedView")}
@@ -356,6 +408,7 @@ export default function TodoClientPage({
         onClose={() => setAddGameModalOpen(false)}
         onAddGame={handleAddGame}
         initialData={initialGameData}
+        recommendedTasks={recommendedTasks}
       />
       {taskModalData && (
         <AddTaskModal

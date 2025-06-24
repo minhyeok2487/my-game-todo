@@ -209,7 +209,8 @@
       "label_charName": "キャラクター名 (任意)",
       "label_imageUrl": "画像URL",
       "button_cancel": "キャンセル",
-      "button_confirm": "追加"
+      "button_confirm": "追加",
+      "recommended_tasks_title": "おすすめタスクを追加 (任意)"
     },
     "addTaskModal": {
       "editTitle": "タスクを編集",
