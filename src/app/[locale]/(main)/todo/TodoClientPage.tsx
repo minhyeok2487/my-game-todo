@@ -320,7 +320,7 @@ export default function TodoClientPage({
   };
 
   return (
-    <div className="container max-w-screen-2xl mx-auto relative p-4 md:p-6">
+    <div className="container max-w-screen-2xl mx-auto relative">
       {isReorderMode && (
         <button
           onClick={handleSaveOrder}
@@ -333,23 +333,23 @@ export default function TodoClientPage({
       )}
 
       <div className="mb-6 flex justify-center">
-        <div className="bg-gray-800 p-1 rounded-full flex items-center">
+        <div className="bg-gray-200 dark:bg-gray-800 p-1 rounded-full flex items-center">
           <button
             onClick={() => setViewMode("game")}
-            className={`cursor-pointer px-4 py-1.5 text-sm font-semibold rounded-full transition-colors ${
+            className={`cursor-pointer px-4 py-1.5 text-sm font-semibold rounded-full ${
               viewMode === "game"
-                ? "bg-gray-600 text-white"
-                : "text-gray-400 hover:text-white"
+                ? "bg-white dark:bg-gray-600 text-gray-800 dark:text-white"
+                : "text-gray-500"
             }`}
           >
             {t("viewToggle.gameView")}
           </button>
           <button
             onClick={() => setViewMode("sorted")}
-            className={`cursor-pointer px-4 py-1.5 text-sm font-semibold rounded-full transition-colors ${
+            className={`cursor-pointer px-4 py-1.5 text-sm font-semibold rounded-full ${
               viewMode === "sorted"
-                ? "bg-gray-600 text-white"
-                : "text-gray-400 hover:text-white"
+                ? "bg-white dark:bg-gray-600 text-gray-800 dark:text-white"
+                : "text-gray-500"
             }`}
           >
             {t("viewToggle.sortedView")}
