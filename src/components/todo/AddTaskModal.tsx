@@ -48,7 +48,6 @@ export const AddTaskModal = ({
   >(null);
   const [recurrenceValue, setRecurrenceValue] = useState<string | null>(null);
   const [autoResetEnabled, setAutoResetEnabled] = useState(false);
-  const [autoDeleteAfterDays, setAutoDeleteAfterDays] = useState<number | null>(null);
 
   const isEditMode = !!taskToEdit;
 
@@ -72,7 +71,6 @@ export const AddTaskModal = ({
         setIsRecurring(taskToEdit.is_recurring || false);
         setRecurrenceType(taskToEdit.recurrence_type || null);
         setAutoResetEnabled(taskToEdit.auto_reset_enabled || false);
-        setAutoDeleteAfterDays(taskToEdit.auto_delete_after_days || null);
         setRecurrenceValue(taskToEdit.recurrence_value || null); // Keep original for all types
 
       } else {
@@ -94,7 +92,6 @@ export const AddTaskModal = ({
         setRecurrenceType(null);
         setRecurrenceValue(null);
         setAutoResetEnabled(false);
-        setAutoDeleteAfterDays(null);
       }
     }
   }, [isOpen, isEditMode, taskToEdit]);
@@ -133,7 +130,6 @@ export const AddTaskModal = ({
       recurrence_type: taskIsRecurring ? taskRecurrenceType : null,
       recurrence_value: taskIsRecurring ? recurrenceValue : null,
       auto_reset_enabled: taskIsRecurring ? taskAutoResetEnabled : false,
-      auto_delete_after_days: taskIsRecurring && !taskAutoResetEnabled ? autoDeleteAfterDays : null,
     };
 
     if (isEditMode) {
@@ -286,7 +282,6 @@ export const AddTaskModal = ({
                       setAutoResetEnabled(false);
                       setRecurrenceType(null);
                       setRecurrenceValue(null);
-                      setAutoDeleteAfterDays(null);
                     }
                   }}
                   className="form-checkbox h-5 w-5 text-cyan-500 rounded border-gray-700 bg-gray-900 focus:ring-cyan-500"
@@ -370,24 +365,6 @@ export const AddTaskModal = ({
                     />
                     {t("label_autoResetEnabled")}
                   </label>
-
-                  {!autoResetEnabled && (
-                    <div className="flex flex-col gap-2 mt-2">
-                      <label className="font-semibold text-gray-300 text-sm">
-                        {t("label_autoDeleteAfterDays")}
-                      </label>
-                      <input
-                        type="number"
-                        value={autoDeleteAfterDays || ''}
-                        onChange={(e) => setAutoDeleteAfterDays(Number(e.target.value))}
-                        className="bg-gray-900 border border-gray-700 rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white"
-                        placeholder="0"
-                      />
-                      <p className="text-xs text-gray-400 mt-1">
-                        {t("hint_autoDeleteAfterDays")}
-                      </p>
-                    </div>
-                  )}
                 </div>
               )}
             </div>
