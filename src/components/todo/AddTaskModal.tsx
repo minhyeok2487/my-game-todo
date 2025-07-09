@@ -175,7 +175,7 @@ export const AddTaskModal = ({
           </div>
 
           {/* 👇 'misc' 카테고리도 마감일 설정 UI가 보이도록 조건 수정 */}
-          {!isRecurring && (
+          {modalData.category !== "daily" && !isRecurring && (
             <div className="flex flex-col gap-4 p-4 rounded-md bg-black/20 border border-gray-700">
               <div className="flex gap-2 bg-gray-800 p-1 rounded-md">
                 <button
