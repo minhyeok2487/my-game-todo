@@ -7,13 +7,18 @@ import { pick } from "lodash";
 
 export type Category = "daily" | "other" | "misc";
 
-export interface Task {
+export type Task = {
   id: string;
   text: string;
   completed: boolean;
   due_date: string | null;
   category: Category;
-}
+  is_recurring: boolean | null;
+  recurrence_type: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'ONCE' | null;
+  recurrence_value: string | null;
+  auto_reset_enabled: boolean | null;
+  last_reset_date: string | null;
+};
 
 export interface Game {
   id: string;
@@ -45,7 +50,7 @@ export default async function TodoPage({
   const { data: games, error } = await supabase
     .from("games")
     .select(
-      `id, name, character_name, image_url, order, tasks ( id, text, completed, due_date, category )`
+      `id, name, character_name, image_url, order, tasks ( id, text, completed, due_date, category, is_recurring, recurrence_type, recurrence_value, auto_reset_enabled, last_reset_date )`
     )
     .eq("user_id", user!.id)
     .order("order", { ascending: true });

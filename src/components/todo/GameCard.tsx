@@ -3,7 +3,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useTranslations } from "next-intl";
-import type { Game, Category, Task } from "@/app/[locale]/(main)/todo/page";
+import type { Game, Task, Category } from "@/app/[locale]/(main)/todo/page";
 import {
   Plus,
   X,
@@ -12,6 +12,7 @@ import {
   Pencil,
   GripVertical,
   Clock,
+  RefreshCw,
 } from "lucide-react";
 import { formatRemainingTime } from "@/lib/utils/times";
 
@@ -99,6 +100,9 @@ const TaskItem = ({
             }`}
           >
             {task.text}
+            {task.auto_reset_enabled && (
+              <RefreshCw size={12} className="inline-block ml-1 text-green-400" />
+            )}
           </span>
           {/* 👇 'misc' 카테고리도 남은 시간(remainingTime)이 표시되도록 조건 수정 */}
           {(task.category === "other" || task.category === "misc") &&

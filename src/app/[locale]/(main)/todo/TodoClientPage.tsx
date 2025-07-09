@@ -10,6 +10,7 @@ import {
 } from "@dnd-kit/sortable";
 import type { User } from "@supabase/supabase-js";
 import type { Game, Task, Category } from "./page";
+
 import { createClient } from "@/lib/supabase/client";
 import { GameCard } from "@/components/todo/GameCard";
 import { AddGameCard } from "@/components/todo/AddGameCard";
@@ -60,7 +61,7 @@ export default function TodoClientPage({
     const { data, error } = await supabase
       .from("games")
       .select(
-        `id, name, character_name, image_url, order, tasks ( id, text, completed, due_date, category )`
+        `id, name, character_name, image_url, order, tasks ( id, text, completed, due_date, category, is_recurring, recurrence_type, recurrence_value, auto_reset_enabled, last_reset_date )`
       )
       .eq("user_id", user.id)
       .order("order", { ascending: true });
@@ -220,7 +221,7 @@ export default function TodoClientPage({
   const handleAddTask = async (
     gameId: string,
     category: Category,
-    taskData: Omit<Task, "id" | "category" | "completed">
+    taskData: Omit<Task, "id" | "category" | "completed" | "last_reset_date">
   ) => {
     const { error } = await supabase.from("tasks").insert({
       ...taskData,
@@ -238,7 +239,7 @@ export default function TodoClientPage({
 
   const handleUpdateTask = async (
     taskId: string,
-    updates: Partial<Omit<Task, "id" | "category">>
+    updates: Partial<Omit<Task, "id" | "category" | "completed" | "last_reset_date">>
   ) => {
     const { error } = await supabase
       .from("tasks")
