@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import type { Category, Task } from "@/app/[locale]/(main)/todo/TodoClientPage";
+import type { Category, Task } from "@/app/[locale]/(main)/todo/page";
 
 interface AddTaskModalProps {
   isOpen: boolean;
@@ -71,9 +71,10 @@ export const AddTaskModal = ({
         // Load recurrence states for editing
         setIsRecurring(taskToEdit.is_recurring || false);
         setRecurrenceType(taskToEdit.recurrence_type || null);
-        setRecurrenceValue(taskToEdit.recurrence_value || null);
         setAutoResetEnabled(taskToEdit.auto_reset_enabled || false);
         setAutoDeleteAfterDays(taskToEdit.auto_delete_after_days || null);
+        setRecurrenceValue(taskToEdit.recurrence_value || null); // Keep original for all types
+
       } else {
         setText("");
         setDueDateType("absolute");
@@ -178,8 +179,7 @@ export const AddTaskModal = ({
           </div>
 
           {/* 👇 'misc' 카테고리도 마감일 설정 UI가 보이도록 조건 수정 */}
-          {(modalData.category === "other" ||
-            modalData.category === "misc") && (
+          {!isRecurring && (
             <div className="flex flex-col gap-4 p-4 rounded-md bg-black/20 border border-gray-700">
               <div className="flex gap-2 bg-gray-800 p-1 rounded-md">
                 <button
@@ -276,7 +276,19 @@ export const AddTaskModal = ({
                 <input
                   type="checkbox"
                   checked={isRecurring}
-                  onChange={(e) => setIsRecurring(e.target.checked)}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setIsRecurring(checked);
+                    if (checked) {
+                      setAutoResetEnabled(true); // Default to true when recurring
+                      setRecurrenceType('DAILY'); // Default to DAILY for new recurring tasks
+                    } else {
+                      setAutoResetEnabled(false);
+                      setRecurrenceType(null);
+                      setRecurrenceValue(null);
+                      setAutoDeleteAfterDays(null);
+                    }
+                  }}
                   className="form-checkbox h-5 w-5 text-cyan-500 rounded border-gray-700 bg-gray-900 focus:ring-cyan-500"
                 />
                 {t("label_isRecurring")}
@@ -297,7 +309,6 @@ export const AddTaskModal = ({
                       className="bg-gray-900 border border-gray-700 rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white"
                     >
                       <option value="">{t("select_recurrenceType")}</option>
-                      <option value="DAILY">{t("recurrenceType_daily")}</option>
                       <option value="WEEKLY">{t("recurrenceType_weekly")}</option>
                       <option value="MONTHLY">{t("recurrenceType_monthly")}</option>
                       <option value="ONCE">{t("recurrenceType_once")}</option>
@@ -310,40 +321,45 @@ export const AddTaskModal = ({
                         {t("label_recurrenceValue")}
                       </label>
                       {recurrenceType === 'WEEKLY' && (
-                        <input
-                          type="text"
-                          value={recurrenceValue || ''}
-                          onChange={(e) => setRecurrenceValue(e.target.value.toUpperCase())}
-                          className="bg-gray-900 border border-gray-700 rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white"
-                          placeholder={t("placeholder_recurrenceValue")}
-                        />
-                      )}
-                      {recurrenceType === 'MONTHLY' && (
-                        <input
-                          type="number"
-                          value={recurrenceValue || ''}
-                          onChange={(e) => setRecurrenceValue(e.target.value)}
-                          className="bg-gray-900 border border-gray-700 rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white"
-                          placeholder="15"
-                          min="1"
-                          max="31"
-                        />
-                      )}
-                      {recurrenceType === 'ONCE' && (
-                        <input
-                          type="date"
-                          value={recurrenceValue || ''}
-                          onChange={(e) => setRecurrenceValue(e.target.value)}
-                          className="bg-gray-900 border border-gray-700 rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white [color-scheme:dark]"
-                        />
-                      )}
-                      <p className="text-xs text-gray-400 mt-1">
-                        {recurrenceType === 'WEEKLY' && t("hint_weekly")}
-                        {recurrenceType === 'MONTHLY' && t("hint_monthly")}
-                        {recurrenceType === 'ONCE' && t("hint_once")}
-                      </p>
-                    </div>
-                  )}
+                      <select
+                        value={recurrenceValue || ''}
+                        onChange={(e) => setRecurrenceValue(e.target.value)}
+                        className="bg-gray-900 border border-gray-700 rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white"
+                      >
+                        <option value="">{t("select_day_of_week")}</option>
+                        {[ 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN' ].map(day => (
+                          <option key={day} value={day}>
+                            {t(`day_${day.toLowerCase()}`)}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                    {recurrenceType === 'MONTHLY' && (
+                      <input
+                        type="number"
+                        value={recurrenceValue || ''}
+                        onChange={(e) => setRecurrenceValue(e.target.value)}
+                        className="bg-gray-900 border border-gray-700 rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white"
+                        placeholder="15"
+                        min="1"
+                        max="31"
+                      />
+                    )}
+                    {recurrenceType === 'ONCE' && (
+                      <input
+                        type="date"
+                        value={recurrenceValue || ''}
+                        onChange={(e) => setRecurrenceValue(e.target.value)}
+                        className="bg-gray-900 border border-gray-700 rounded-md p-3 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/50 outline-none text-white [color-scheme:dark]"
+                      />
+                    )}
+                    <p className="text-xs text-gray-400 mt-1">
+                      {recurrenceType === 'WEEKLY' && t("hint_weekly")}
+                      {recurrenceType === 'MONTHLY' && t("hint_monthly")}
+                      {recurrenceType === 'ONCE' && t("hint_once")}
+                    </p>
+                  </div>
+                )}
 
                   <label className="flex items-center gap-2 text-gray-300 font-semibold">
                     <input

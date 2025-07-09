@@ -9,23 +9,7 @@ import {
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
 import type { User } from "@supabase/supabase-js";
-import type { Game, Category } from "./page";
-
-// Task 타입 확장
-export type Task = {
-  id: string;
-  text: string;
-  completed: boolean;
-  due_date: string | null;
-  category: Category;
-  // New fields for recurrence
-  is_recurring: boolean;
-  recurrence_type: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'ONCE' | null;
-  recurrence_value: string | null;
-  auto_reset_enabled: boolean;
-  auto_delete_after_days: number | null;
-  last_reset_date: string | null;
-};
+import type { Game, Task, Category } from "./page";
 
 import { createClient } from "@/lib/supabase/client";
 import { GameCard } from "@/components/todo/GameCard";
@@ -237,13 +221,7 @@ export default function TodoClientPage({
   const handleAddTask = async (
     gameId: string,
     category: Category,
-    taskData: Omit<Task, "id" | "category" | "completed" | "is_recurring" | "recurrence_type" | "recurrence_value" | "auto_reset_enabled" | "auto_delete_after_days" | "last_reset_date"> & {
-      is_recurring?: boolean;
-      recurrence_type?: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'ONCE' | null;
-      recurrence_value?: string | null;
-      auto_reset_enabled?: boolean;
-      auto_delete_after_days?: number | null;
-    }
+    taskData: Omit<Task, "id" | "category" | "completed" | "last_reset_date">
   ) => {
     const { error } = await supabase.from("tasks").insert({
       ...taskData,
@@ -261,13 +239,7 @@ export default function TodoClientPage({
 
   const handleUpdateTask = async (
     taskId: string,
-    updates: Partial<Omit<Task, "id" | "category" | "is_recurring" | "recurrence_type" | "recurrence_value" | "auto_reset_enabled" | "auto_delete_after_days" | "last_reset_date"> & {
-      is_recurring?: boolean;
-      recurrence_type?: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'ONCE' | null;
-      recurrence_value?: string | null;
-      auto_reset_enabled?: boolean;
-      auto_delete_after_days?: number | null;
-    }>
+    updates: Partial<Omit<Task, "id" | "category" | "completed" | "last_reset_date">>
   ) => {
     const { error } = await supabase
       .from("tasks")

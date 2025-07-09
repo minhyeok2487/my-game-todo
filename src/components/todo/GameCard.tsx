@@ -3,7 +3,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useTranslations } from "next-intl";
-import type { Game, Category, Task } from "@/app/[locale]/(main)/todo/page";
+import type { Game, Task, Category } from "@/app/[locale]/(main)/todo/page";
 import {
   Plus,
   X,
